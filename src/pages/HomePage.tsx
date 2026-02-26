@@ -52,7 +52,7 @@ export function HomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b-2 border-brand-black pb-10">
           <div className="relative">
-            <div className="inline-block px-3 py-1 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.3em] mb-4 border-2 border-brand-black shadow-sketch-hover">
+            <div className="inline-block px-4 py-1.5 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.3em] mb-4 border-2 border-brand-black shadow-sketch-hover z-10 relative">
               Teacher Workspace
             </div>
             <h2 className="font-display text-7xl font-black text-brand-black tracking-tighter leading-[0.8] mb-4 uppercase">
@@ -65,7 +65,7 @@ export function HomePage() {
           <button
             onClick={handleCreateNew}
             disabled={isCreating}
-            className="btn-sketch text-sm px-10 py-4 h-auto min-w-[240px]"
+            className="btn-sketch text-sm px-10 py-4 h-auto min-w-[240px] hover:rotate-1 focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
           >
             {isCreating ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -132,13 +132,10 @@ export function HomePage() {
               <div
                 key={lesson.id}
                 onClick={() => navigate(`/editor/${lesson.id}`)}
-                className={cn(
-                  "group cursor-pointer transition-all duration-300",
-                  sessions.length > 0 ? "opacity-60 hover:opacity-100" : "opacity-80 hover:opacity-100"
-                )}
+                className="group cursor-pointer transition-all duration-300"
               >
                 <div className={cn(
-                  "border-2 p-8 shadow-none group-hover:shadow-sketch group-hover:border-solid group-hover:border-brand-black group-hover:-translate-y-1 transition-all h-full flex flex-col grayscale hover:grayscale-0",
+                  "border-2 p-8 shadow-none group-hover:shadow-sketch group-hover:border-solid group-hover:border-brand-black group-hover:-translate-y-1 transition-all h-full flex flex-col grayscale group-hover:grayscale-0",
                   lesson.id.startsWith('stem') || lesson.id.startsWith('math')
                     ? "border-brand-black/40 bg-white"
                     : "border-dashed border-brand-black/30 bg-white/50"
@@ -173,7 +170,7 @@ export function HomePage() {
               <button
                 onClick={handleCreateNew}
                 disabled={isCreating}
-                className="border-2 border-dashed border-brand-black/20 flex flex-col items-center justify-center p-12 hover:border-brand-primary hover:bg-brand-primary/5 transition-colors group min-h-[220px]"
+                className="border-2 border-dashed border-brand-black/20 flex flex-col items-center justify-center p-12 hover:border-brand-primary hover:bg-brand-primary/5 transition-colors group min-h-[220px] focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
               >
                  <Plus className="w-10 h-10 mb-4 text-brand-black/20 group-hover:text-brand-primary transition-colors" />
                  <p className="font-black text-[10px] uppercase tracking-widest text-brand-black/40 group-hover:text-brand-primary">
@@ -183,7 +180,7 @@ export function HomePage() {
             )}
           </div>
         </section>
-        <footer className="pt-16 text-center border-t border-brand-black/5 pb-12">
+        <footer className="pt-16 text-center border-t-2 border-brand-black/5 pb-12">
           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-gray opacity-50 font-sans">
             Professional Grade Instructional Deployment Engine
           </p>

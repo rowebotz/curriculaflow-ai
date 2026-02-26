@@ -25,6 +25,7 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
   const isMounted = useRef(true);
   const lastProcessedTrigger = useRef(0);
+  const lastExtractionRef = useRef<string>('');
   useEffect(() => {
     isMounted.current = true;
     return () => { isMounted.current = false; };
@@ -38,12 +39,17 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
     }
   }, []);
   const extractAndUpdateBlueprint = useCallback((content: string) => {
-    const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-    if (jsonMatch && jsonMatch[1]) {
+    // Find all JSON blocks and take the LAST one (the most recent revision)
+    const matches = Array.from(content.matchAll(/```(?:json)?\s*([\s\S]*?)\s*```/g));
+    if (matches.length > 0) {
+      const lastMatch = matches[matches.length - 1][1];
+      const cleanedJson = lastMatch.trim();
+      // Prevent redundant updates if the content hasn't changed
+      if (cleanedJson === lastExtractionRef.current) return true;
       try {
-        const cleanedJson = jsonMatch[1].trim();
         const parsedData = JSON.parse(cleanedJson);
         if (parsedData && typeof parsedData === 'object') {
+          lastExtractionRef.current = cleanedJson;
           onBlueprintUpdate(parsedData);
           return true;
         }
@@ -93,6 +99,7 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
   useEffect(() => {
     if (!sessionId) return;
     setMessages([INITIAL_MESSAGE]);
+    lastExtractionRef.current = '';
     chatService.switchSession(sessionId);
     const restoreHistory = async () => {
       setIsRestoring(true);
@@ -105,6 +112,7 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
             .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));
           if (history.length > 0) {
             setMessages(history);
+            // Scan backwards for the latest valid blueprint
             for (let i = history.length - 1; i >= 0; i--) {
               if (extractAndUpdateBlueprint(history[i].content)) {
                 break;
@@ -134,13 +142,13 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
   }, [autoAlignTrigger, sendMessage, isRestoring, isTyping]);
   return (
     <div className="flex flex-col h-full bg-white relative border-r-2 border-brand-black/5 font-sans">
-      <div className="bg-brand-black text-white px-4 py-3 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em]">
+      <div className="bg-brand-black text-white px-4 py-3 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] z-20">
         <div className="flex items-center gap-2">
           <Bot className="w-4 h-4 text-brand-primary" />
           <span>CurriculaFlow Engine</span>
         </div>
         {isRestoring ? (
-          <div className="flex items-center gap-2 text-brand-primary animate-pulse">
+          <div className="flex items-center gap-2 text-brand-primary animate-pulse bg-brand-primary/10 px-2 py-0.5 border border-brand-primary/20">
             <RefreshCw className="w-3 h-3 animate-spin" />
             <span>Restoring Progress...</span>
           </div>
@@ -153,20 +161,24 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
           {messages.map((m, i) => (
             <div key={i} className={cn("flex flex-col", m.role === 'user' ? "items-end" : "items-start")}>
               <div className={cn(
-                "max-w-[92%] p-5 border-2 border-brand-black shadow-sketch transition-all",
+                "max-w-[94%] p-5 md:p-6 border-2 border-brand-black shadow-sketch transition-all",
                 m.role === 'user' ? "bg-muted font-medium" : "bg-white"
               )}>
-                <div className="flex items-center gap-2 mb-3 text-[10px] font-black uppercase tracking-widest text-brand-gray">
-                  {m.role === 'user' ? <User className="w-3 h-3" /> : <Bot className="w-3 h-3 text-brand-primary" />}
+                <div className={cn(
+                  "flex items-center gap-2 mb-3 text-[10px] font-black uppercase tracking-widest",
+                  m.role === 'user' ? "text-brand-gray" : "text-brand-primary"
+                )}>
+                  {m.role === 'user' ? <User className="w-3 h-3 text-brand-black" /> : <Bot className="w-3 h-3" />}
                   <span>{m.role === 'user' ? 'Educator' : 'Assistant'}</span>
                 </div>
-                <div className="text-base leading-relaxed whitespace-pre-wrap text-brand-black">
+                <div className="text-sm md:text-base leading-relaxed whitespace-pre-wrap text-brand-black">
                   {m.content.split(/```(?:json)?\s*[\s\S]*?\s*```/g).map((part, idx, arr) => (
                     <React.Fragment key={idx}>
                       {part}
                       {idx < arr.length - 1 && (
-                        <span className="block my-4 p-3 bg-brand-primary/5 border-l-4 border-brand-primary text-brand-primary font-black uppercase text-[10px] tracking-widest">
-                          [Blueprint Verified & Updated]
+                        <span className="block my-4 p-4 bg-brand-primary/5 border-l-4 border-brand-primary text-brand-primary font-black uppercase text-[10px] tracking-widest flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
+                          Blueprint Verified & Updated
                         </span>
                       )}
                     </React.Fragment>
@@ -176,9 +188,9 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
             </div>
           ))}
           {isTyping && (
-            <div className="flex items-center gap-3 p-5 border-2 border-dashed border-brand-black/20 bg-muted/30">
+            <div className="flex items-center gap-3 p-5 border-2 border-dashed border-brand-black/20 bg-muted/30 max-w-[94%]">
               <Loader2 className="w-4 h-4 animate-spin text-brand-primary" />
-              <span className="font-black uppercase tracking-widest text-[10px] text-brand-black/60 italic font-bold">Mapping standards & scaffolding...</span>
+              <span className="font-black uppercase tracking-widest text-[10px] text-brand-black/60 italic">Mapping standards & scaffolding...</span>
             </div>
           )}
           <div ref={scrollAnchorRef} className="h-4" />
@@ -197,7 +209,7 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
           <button
             onClick={handleUserSend}
             disabled={isTyping || isRestoring || !input.trim()}
-            className="absolute bottom-4 right-3 p-3 bg-brand-primary text-white border-2 border-brand-black shadow-sketch hover:shadow-sketch-hover active:translate-y-0.5 disabled:opacity-30 disabled:grayscale transition-all"
+            className="absolute bottom-4 right-3 p-3 bg-brand-primary text-white border-2 border-brand-black shadow-sketch hover:shadow-sketch-hover active:translate-y-0.5 disabled:opacity-30 disabled:grayscale transition-all z-10"
           >
             <Send className="w-5 h-5" />
           </button>

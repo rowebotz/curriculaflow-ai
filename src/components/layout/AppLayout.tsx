@@ -29,7 +29,7 @@ function NavContent({ pathname }: NavContentProps) {
             key={item.path}
             to={item.path}
             className={cn(
-              "flex items-center gap-3 p-3 font-bold transition-all border-2 border-transparent text-sm uppercase tracking-wide",
+              "flex items-center gap-3 p-3 font-bold transition-all border-2 border-transparent text-sm uppercase tracking-wide focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:outline-none",
               pathname === item.path
                 ? "bg-brand-primary text-white border-brand-black shadow-sketch"
                 : "hover:bg-muted text-brand-black"
@@ -42,8 +42,11 @@ function NavContent({ pathname }: NavContentProps) {
       </nav>
       <div className="pt-6 border-t-2 border-brand-black/5 space-y-4">
         <div className="flex items-center gap-2 text-brand-gray">
-          <Coffee className="w-4 h-4" />
-          <span className="text-[10px] font-bold uppercase">System: Operational</span>
+          <div className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-widest">System: Operational</span>
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase p-2 border border-brand-black/10 bg-white">
@@ -77,7 +80,7 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
               </h1>
               <Sheet>
                 <SheetTrigger asChild>
-                  <button className="p-2 border-2 border-brand-black shadow-sketch active:shadow-none translate-y-0 active:translate-y-0.5">
+                  <button className="p-2 border-2 border-brand-black shadow-sketch active:shadow-none translate-y-0 active:translate-y-0.5 focus-visible:ring-2 focus-visible:ring-brand-primary">
                     <Menu className="w-5 h-5" />
                   </button>
                 </SheetTrigger>
@@ -89,17 +92,20 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
           )}
           <main className={cn("flex-1 relative", isMobile ? "p-4" : "p-10 pb-24")}>
             {children}
-            <footer className="mt-20 flex justify-between items-center text-[10px] text-brand-gray font-bold uppercase tracking-widest border-t border-brand-black/5 pt-4">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                  <Lock className="w-3 h-3" />
+            <footer className="mt-20 flex justify-between items-center text-[10px] text-brand-gray font-bold uppercase tracking-widest border-t-2 border-brand-black/5 pt-6">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <Lock className="w-3 h-3 text-brand-black/40" />
                   <span>Secure Workspace</span>
                 </div>
-                <div className="px-1.5 py-0.5 border border-brand-black/10 bg-muted/30 text-[8px] font-black">
-                  v1.0.4-PRO
+                <div className="px-1.5 py-0.5 border border-brand-black/10 bg-white text-[8px] font-black">
+                  BUILD_ID: CF-0X7A2
                 </div>
               </div>
-              <Link to="/why-hire" className="hover:text-brand-primary hover:underline transition-all cursor-pointer">
+              <Link 
+                to="/why-hire" 
+                className="text-brand-black/70 hover:text-brand-primary hover:underline transition-all underline-offset-4 decoration-brand-primary/30"
+              >
                 Stephen Rowe's Job Application Tool
               </Link>
             </footer>
