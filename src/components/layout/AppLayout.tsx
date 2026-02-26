@@ -89,7 +89,7 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
                 <span>Secure Professional Workspace</span>
               </div>
               <div className="cursor-pointer hover:text-brand-primary transition-colors">
-                CurriculaFlow Instructional Intelligence
+                Stephen Rowe's Job Application Tool
               </div>
             </footer>
           </main>
