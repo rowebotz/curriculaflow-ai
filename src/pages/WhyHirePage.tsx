@@ -28,7 +28,12 @@ export function WhyHirePage() {
                 <div className="space-y-6 text-lg leading-relaxed text-brand-black font-medium">
                   <p>
                     Stephen Rowe builds learning systems that actually get used. As Program Director of
-                    <span className="text-brand-primary font-bold"> Cato Courses</span>, he led the creation and launch
+                    <a 
+                      href="https://www.cato.courses" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-brand-primary font-bold hover:underline underline-offset-4 transition-all"
+                    > Cato Courses</a>, he led the creation and launch
                     of a custom LMS platform in under a year, working alongside scholars, designers, and executives
                     to bring rigorous academic content into a modern, digital-first experience.
                   </p>
@@ -105,10 +110,10 @@ export function WhyHirePage() {
                   <p className="text-xs italic text-brand-gray leading-relaxed">
                     "Stephen doesn't just deploy technology; he integrates pedagogy into the architectural layer of every platform he builds."
                   </p>
-                  <a 
-                    href="https://www.digitalrowe.com" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                  <a
+                    href="https://www.digitalrowe.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-full btn-sketch bg-white text-brand-black hover:bg-brand-primary hover:text-white transition-colors"
                   >
                     See more
