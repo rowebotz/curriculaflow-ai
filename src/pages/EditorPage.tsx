@@ -75,16 +75,18 @@ export function EditorPage() {
           <div className="flex gap-4">
             <button
               onClick={handleRefine}
-              className="px-4 py-2 border-2 border-brand-black font-bold hover:bg-brand-primary hover:text-white transition-all flex items-center gap-2 uppercase text-[10px] tracking-widest"
+              aria-label="Automatically align lesson with standards"
+              className="px-4 py-2 border-2 border-brand-black font-bold hover:bg-brand-primary hover:text-white focus:ring-2 focus:ring-brand-primary transition-all flex items-center gap-2 uppercase text-[10px] tracking-widest"
             >
               <Sparkles className="w-4 h-4" />
               Auto-Align
             </button>
             <button
               onClick={() => setIsExportOpen(true)}
-              className="btn-sketch"
+              aria-label="Export lesson to Learning Management System"
+              className="btn-sketch focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
             >
-              Deploy Module
+              Export to LMS
             </button>
           </div>
         </header>
