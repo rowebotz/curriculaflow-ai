@@ -120,15 +120,6 @@ export function WhyHirePage() {
                   </a>
                 </div>
               </div>
-              <div className="border-3 border-brand-black p-6 bg-highlighter/10 rotate-1">
-                <h4 className="font-black uppercase text-xs mb-3 flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4" />
-                  Ethical AI Stance
-                </h4>
-                <p className="text-xs font-bold leading-relaxed">
-                  Stephen prioritizes FERPA/COPPA compliance and transparent RAG pipelines to ensure AI tools remain safe and verifiable in academic settings.
-                </p>
-              </div>
             </aside>
           </div>
         </div>

@@ -120,6 +120,15 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
           data.modules.map((mod: any, idx: number) => {
             const modId = mod.id || `mod-${idx}`;
             const headingId = `heading-${modId}`;
+            const titleLower = (mod.title || '').toLowerCase();
+            const modeLower = (mod.mode || '').toLowerCase();
+            
+            const isStage = titleLower.includes('warmup') || 
+                           titleLower.includes('reflection') || 
+                           titleLower.includes('checkpoint') ||
+                           modeLower.includes('warmup') ||
+                           modeLower.includes('checkpoint');
+
             return (
               <article
                 key={modId}
@@ -127,10 +136,16 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
                 role="listitem"
                 aria-labelledby={headingId}
               >
-                <div className="absolute -left-[13px] top-0 w-6 h-6 bg-brand-black text-white flex items-center justify-center text-[10px] font-black z-10" aria-hidden="true">
+                <div className={cn(
+                  "absolute -left-[13px] top-0 w-6 h-6 flex items-center justify-center text-[10px] font-black z-10",
+                  isStage ? "bg-brand-primary text-white" : "bg-brand-black text-white"
+                )} aria-hidden="true">
                   {String(idx + 1).padStart(2, '0')}
                 </div>
-                <div className="bg-white border-2 border-brand-black p-6 hover:shadow-sketch-lg transition-all duration-300">
+                <div className={cn(
+                  "border-2 border-brand-black p-6 hover:shadow-sketch-lg transition-all duration-300",
+                  isStage ? "bg-brand-primary/5 border-l-4" : "bg-white"
+                )}>
                   <div className="flex justify-between items-start mb-6 gap-4">
                     <div className="flex items-center gap-2">
                       <h4 id={headingId} className="text-xl font-black uppercase tracking-tight text-brand-black font-display">{mod.title || `Module ${idx + 1}`}</h4>
@@ -167,7 +182,7 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
                                 </span>
                              </div>
                              <p className="leading-relaxed text-brand-gray mb-3 italic">
-                               {mod.rationale?.[s] || "Mapping verified via CurriculaFlow RAG standards engine. Instructional strategies specifically target standard competencies."}
+                               {mod.rationale?.[s] || "Mapping verified via CurriculaFlow RAG standards engine. Strategies target specific standard competencies."}
                              </p>
                              <button className="w-full py-2 bg-brand-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-primary/90 transition-colors focus:ring-2 focus:ring-offset-1">
                                View Mastery Guide

@@ -136,12 +136,22 @@ export function HomePage() {
                 onClick={() => navigate(`/editor/${lesson.id}`)}
                 className={cn(
                   "group cursor-pointer transition-all duration-300",
-                  sessions.length > 0 ? "opacity-40 hover:opacity-100" : "opacity-70 hover:opacity-100"
+                  sessions.length > 0 && lesson.id.length < 5 ? "opacity-40 hover:opacity-100" : "opacity-80 hover:opacity-100"
                 )}
               >
-                <div className="border-2 border-dashed border-brand-black/30 p-8 bg-white/50 shadow-none group-hover:shadow-sketch group-hover:border-solid group-hover:border-brand-black group-hover:-translate-y-1 transition-all h-full flex flex-col grayscale hover:grayscale-0">
+                <div className={cn(
+                  "border-2 p-8 shadow-none group-hover:shadow-sketch group-hover:border-solid group-hover:border-brand-black group-hover:-translate-y-1 transition-all h-full flex flex-col grayscale hover:grayscale-0",
+                  lesson.id.startsWith('stem') || lesson.id.startsWith('math') 
+                    ? "border-brand-black/40 bg-white" 
+                    : "border-dashed border-brand-black/30 bg-white/50"
+                )}>
                   <div className="flex justify-between items-start mb-6">
-                    <span className="text-[10px] font-black uppercase px-2 py-1 bg-brand-primary/20 text-brand-primary border border-brand-primary/30">
+                    <span className={cn(
+                      "text-[10px] font-black uppercase px-2 py-1 border",
+                      lesson.subject === 'STEM' ? "bg-blue-50 text-blue-700 border-blue-200" :
+                      lesson.subject === 'Math' ? "bg-green-50 text-green-700 border-green-200" :
+                      "bg-brand-primary/20 text-brand-primary border-brand-primary/30"
+                    )}>
                       {lesson.subject}
                     </span>
                     <span className="text-[10px] text-brand-gray font-bold uppercase font-sans">{lesson.date}</span>
