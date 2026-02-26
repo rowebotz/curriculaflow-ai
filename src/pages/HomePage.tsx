@@ -1,138 +1,71 @@
-// Home page of the app.
-// Currently a demo placeholder "please wait" screen.
-// Replace this file with your actual app UI. Do not delete it to use some other file as homepage. Simply replace the entire contents of this file.
-
-import { useEffect, useMemo, useState } from 'react'
-import { Sparkles } from 'lucide-react'
-
-import { ThemeToggle } from '@/components/ThemeToggle'
-import { HAS_TEMPLATE_DEMO, TemplateDemo } from '@/components/TemplateDemo'
-import { Button } from '@/components/ui/button'
-import { Toaster, toast } from '@/components/ui/sonner'
-
-function formatDuration(ms: number): string {
-  const total = Math.max(0, Math.floor(ms / 1000))
-  const m = Math.floor(total / 60)
-  const s = total % 60
-  return `${m}:${s.toString().padStart(2, '0')}`
-}
-
+import React from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { SketchCard } from '@/components/ui/sketch-card';
+import { Button } from '@/components/ui/button';
+import { Plus, Clock, Tag } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { mockLessons } from '@/lib/mockData';
 export function HomePage() {
-  const [coins, setCoins] = useState(0)
-  const [isRunning, setIsRunning] = useState(false)
-  const [startedAt, setStartedAt] = useState<number | null>(null)
-  const [elapsedMs, setElapsedMs] = useState(0)
-
-  useEffect(() => {
-    if (!isRunning || startedAt === null) return
-
-    const t = setInterval(() => {
-      setElapsedMs(Date.now() - startedAt)
-    }, 250)
-
-    return () => clearInterval(t)
-  }, [isRunning, startedAt])
-
-  const formatted = useMemo(() => formatDuration(elapsedMs), [elapsedMs])
-
-  const onPleaseWait = () => {
-    setCoins((c) => c + 1)
-
-    if (!isRunning) {
-      // Resume from the current elapsed time
-      setStartedAt(Date.now() - elapsedMs)
-      setIsRunning(true)
-      toast.success('Building your app…', {
-        description: "Hang tight — we're setting everything up.",
-      })
-      return
-    }
-
-    setIsRunning(false)
-    toast.info('Still working…', {
-      description: 'You can come back in a moment.',
-    })
-  }
-
-  const onReset = () => {
-    setCoins(0)
-    setIsRunning(false)
-    setStartedAt(null)
-    setElapsedMs(0)
-    toast('Reset complete')
-  }
-
-  const onAddCoin = () => {
-    setCoins((c) => c + 1)
-    toast('Coin added')
-  }
-
+  const navigate = useNavigate();
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground p-4 overflow-hidden relative">
-      <ThemeToggle />
-      <div className="absolute inset-0 bg-gradient-rainbow opacity-10 dark:opacity-20 pointer-events-none" />
-
-      <div className="text-center space-y-8 relative z-10 animate-fade-in w-full">
-        <div className="flex justify-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-primary floating">
-            <Sparkles className="w-8 h-8 text-white rotating" />
+    <AppLayout>
+      <div className="max-w-6xl mx-auto space-y-12">
+        <header className="flex justify-between items-end">
+          <div>
+            <h2 className="font-display text-6xl mb-2">My Sketchpad</h2>
+            <p className="text-xl text-muted-foreground">Ready to weave some knowledge?</p>
           </div>
-        </div>
-
-        <div className="space-y-3">
-          <h1 className="text-5xl md:text-7xl font-display font-bold text-balance leading-tight">
-            Creating your <span className="text-gradient">app</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto text-pretty">
-            Your application would be ready soon.
-          </p>
-        </div>
-
-        {HAS_TEMPLATE_DEMO ? (
-          <div className="max-w-5xl mx-auto text-left">
-            <TemplateDemo />
+          <button 
+            onClick={() => navigate('/editor')}
+            className="btn-sketch text-lg"
+          >
+            <Plus className="mr-2 h-6 w-6" />
+            New Lesson Plan
+          </button>
+        </header>
+        <section>
+          <div className="flex items-center gap-2 mb-6">
+            <Clock className="w-5 h-5" />
+            <h3 className="font-bold text-xl uppercase tracking-wider">Recent Drafts</h3>
           </div>
-        ) : (
-          <>
-            <div className="flex justify-center gap-4">
-              <Button
-                size="lg"
-                onClick={onPleaseWait}
-                className="btn-gradient px-8 py-4 text-lg font-semibold hover:-translate-y-0.5 transition-all duration-200"
-                aria-live="polite"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {mockLessons.map((lesson) => (
+              <SketchCard 
+                key={lesson.id} 
+                className="p-6 cursor-pointer"
+                onClick={() => navigate(`/editor/${lesson.id}`)}
               >
-                Please Wait
-              </Button>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start">
+                    <span className="text-xs font-bold uppercase px-2 py-1 bg-highlighter border-2 border-ink">
+                      {lesson.subject}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{lesson.date}</span>
+                  </div>
+                  <h4 className="text-2xl font-bold leading-tight">{lesson.title}</h4>
+                  <p className="text-muted-foreground line-clamp-2">{lesson.description}</p>
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {lesson.tags.map(tag => (
+                      <span key={tag} className="flex items-center text-xs bg-muted border border-ink/20 px-2 py-1 italic">
+                        <Tag className="w-3 h-3 mr-1" />
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </SketchCard>
+            ))}
+            {/* Empty State placeholder card */}
+            <div className="border-3 border-dashed border-ink/20 flex flex-col items-center justify-center p-8 opacity-50">
+               <Plus className="w-12 h-12 mb-4" />
+               <p className="font-bold">Add another idea...</p>
             </div>
-
-            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-              <div>
-                Time elapsed:{' '}
-                <span className="font-medium tabular-nums text-foreground">{formatted}</span>
-              </div>
-              <div>
-                Coins:{' '}
-                <span className="font-medium tabular-nums text-foreground">{coins}</span>
-              </div>
-            </div>
-
-            <div className="flex justify-center gap-2">
-              <Button variant="outline" size="sm" onClick={onReset}>
-                Reset
-              </Button>
-              <Button variant="outline" size="sm" onClick={onAddCoin}>
-                Add Coin
-              </Button>
-            </div>
-          </>
-        )}
+          </div>
+        </section>
+        <footer className="pt-12 text-center text-muted-foreground border-t-2 border-ink/5">
+          <p className="italic">"The art of teaching is the art of assisting discovery." — Mark Van Doren</p>
+        </footer>
       </div>
-
-      <footer className="absolute bottom-8 text-center text-muted-foreground/80">
-        <p>Powered by Cloudflare</p>
-      </footer>
-
-      <Toaster richColors closeButton />
-    </div>
-  )
+    </AppLayout>
+  );
 }
