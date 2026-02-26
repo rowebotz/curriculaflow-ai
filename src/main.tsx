@@ -17,32 +17,35 @@ import { AnalyticsPage } from '@/pages/AnalyticsPage'
 import { WhyHirePage } from '@/pages/WhyHirePage'
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <HomePage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/editor",
-    element: <EditorPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/editor/:sessionId",
-    element: <EditorPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/analytics",
-    element: <AnalyticsPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/why-hire",
-    element: <WhyHirePage />,
-    errorElement: <RouteErrorBoundary />,
-  }
-]);
+  [
+    {
+      path: "/",
+      element: <HomePage />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: "/editor",
+      element: <EditorPage />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: "/editor/:sessionId",
+      element: <EditorPage />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: "/analytics",
+      element: <AnalyticsPage />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: "/why-hire",
+      element: <WhyHirePage />,
+      errorElement: <RouteErrorBoundary />,
+    },
+  ],
+  { basename: "/curriculaflow-ai" }
+);
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
