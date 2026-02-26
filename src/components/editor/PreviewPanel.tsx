@@ -1,10 +1,14 @@
 import React from 'react';
-import { Layers, Target, BookOpen, AlertCircle } from 'lucide-react';
+import { Layers, Target, BookOpen, AlertCircle, HelpCircle, GraduationCap } from 'lucide-react';
 import { SketchCard } from '@/components/ui/sketch-card';
+import { RigorAdjuster } from './RigorAdjuster';
+import { LearningScienceConfig } from './LearningScienceConfig';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 interface PreviewProps {
   data: any;
+  onUpdate?: (newData: any) => void;
 }
-export function PreviewPanel({ data }: PreviewProps) {
+export function PreviewPanel({ data, onUpdate }: PreviewProps) {
   if (!data) {
     return (
       <div className="h-full flex flex-col items-center justify-center p-12 text-center bg-[#f0f0f0]/30">
@@ -14,11 +18,40 @@ export function PreviewPanel({ data }: PreviewProps) {
       </div>
     );
   }
+  const handleRigorChange = (level: string) => {
+    onUpdate?.({ ...data, rigorLevel: level });
+  };
+  const handleLayerUpdate = (key: string, val: boolean) => {
+    onUpdate?.({
+      ...data,
+      pedagogicalLayers: {
+        ...data.pedagogicalLayers,
+        [key]: val
+      }
+    });
+  };
   return (
     <div className="h-full p-8 overflow-y-auto bg-white">
       <div className="mb-10 text-center border-b-4 border-double border-ink pb-6">
         <h3 className="font-display text-5xl mb-2">{data.title || 'Lesson Blueprint'}</h3>
-        <p className="uppercase tracking-widest text-sm font-bold text-muted-foreground">Generated Strategy Document</p>
+        <p className="uppercase tracking-widest text-sm font-bold text-muted-foreground flex items-center justify-center gap-2">
+          <GraduationCap className="w-4 h-4" />
+          Pedagogical Framework: {data.rigorLevel || 'Standard'}
+        </p>
+      </div>
+      <div className="grid md:grid-cols-5 gap-6 mb-12">
+        <div className="md:col-span-3">
+          <RigorAdjuster 
+            currentLevel={data.rigorLevel || 'Standard'} 
+            onLevelChange={handleRigorChange} 
+          />
+        </div>
+        <div className="md:col-span-2">
+          <LearningScienceConfig 
+            layers={data.pedagogicalLayers || {}} 
+            onUpdate={handleLayerUpdate} 
+          />
+        </div>
       </div>
       <div className="space-y-12">
         {data.modules?.map((mod: any, idx: number) => (
@@ -29,11 +62,20 @@ export function PreviewPanel({ data }: PreviewProps) {
             <SketchCard className="p-6 ml-2">
               <div className="flex justify-between items-start mb-6">
                 <h4 className="text-3xl font-bold">{mod.title}</h4>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                    {mod.standards?.map((s: string) => (
-                     <span key={s} className="text-[10px] font-bold border-2 border-ink bg-highlighter px-2 py-0.5">
-                       {s}
-                     </span>
+                     <Popover key={s}>
+                       <PopoverTrigger asChild>
+                         <button className="text-[10px] font-bold border-2 border-ink bg-highlighter px-2 py-0.5 hover:bg-highlighter/80 transition-colors flex items-center gap-1">
+                           {s}
+                           <HelpCircle className="w-2.5 h-2.5" />
+                         </button>
+                       </PopoverTrigger>
+                       <PopoverContent className="bg-ink text-white border-none shadow-sketch text-xs p-3">
+                         <div className="font-bold mb-1 border-b border-white/20 pb-1">Pedagogical Rationale</div>
+                         <p className="italic">{mod.rationale?.[s] || "Alignment optimized for Bloom's Taxonomy progression."}</p>
+                       </PopoverContent>
+                     </Popover>
                    ))}
                 </div>
               </div>
@@ -56,15 +98,25 @@ export function PreviewPanel({ data }: PreviewProps) {
                   </div>
                   <div className="space-y-3">
                     <div className="p-2 border border-ink/20 bg-muted/30 text-sm">
-                      <span className="font-bold">Direct Instruction:</span> Concept modeling using visual aids.
+                      <span className="font-bold">Mode:</span> {mod.mode || 'Inquiry-Based Discovery'}
                     </div>
-                    <div className="p-2 border border-ink/20 bg-muted/30 text-sm">
-                      <span className="font-bold">Guided Practice:</span> Collaborative peer mapping.
-                    </div>
+                    {data.pedagogicalLayers?.retrievalPractice && (
+                      <div className="p-2 border-2 border-ink border-dashed bg-highlighter/10 text-xs font-bold animate-pulse">
+                        [Retrieval Practice Activity Inserted Here]
+                      </div>
+                    )}
                   </div>
                 </section>
               </div>
             </SketchCard>
+            {data.pedagogicalLayers?.formativeCheckpoints && idx < data.modules.length - 1 && (
+              <div className="ml-8 my-6 py-3 border-l-4 border-dotted border-ink flex items-center gap-4">
+                <div className="w-6 h-6 bg-ink rotate-45 flex items-center justify-center shadow-sketch">
+                   <CheckSquare className="w-3 h-3 text-white -rotate-45" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Formative Mastery Checkpoint</span>
+              </div>
+            )}
           </div>
         ))}
         {(!data.modules || data.modules.length === 0) && (

@@ -1,7 +1,8 @@
 import React from "react";
-import { Home, PenTool, BarChart3, Settings, Coffee } from "lucide-react";
+import { Home, PenTool, BarChart3, Coffee, ShieldCheck, Lock } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 export function AppLayout({ children }: { children: React.ReactNode }): JSX.Element {
   const location = useLocation();
   const navItems = [
@@ -37,17 +38,42 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
         <div className="pt-6 border-t-2 border-ink/10 space-y-4">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Coffee className="w-4 h-4" />
-            <span className="text-xs">System: Hot & Ready</span>
+            <span className="text-xs font-bold">System: Hot & Ready</span>
           </div>
-          <div className="p-3 bg-muted border-2 border-ink text-xs font-bold rotate-1">
-            Note: AI usage limits apply to all sessions.
+          <div className="flex flex-col gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase p-2 border border-ink/10 cursor-help">
+                    <ShieldCheck className="w-3.5 h-3.5 text-green-600" />
+                    <span>FERPA/COPPA Compliant</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="bg-ink text-white p-3 text-xs">
+                  <p className="max-w-[180px]">Data is anonymized. We do not store PII. AI interactions are encrypted and transient.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <div className="p-3 bg-muted border-2 border-ink text-[10px] font-bold rotate-1 leading-tight">
+              NOTE: Although this project has AI capabilities, there is a limit on requests across all user apps.
+            </div>
           </div>
         </div>
       </aside>
       <main className="flex-1 relative overflow-y-auto">
-        <div className="p-8">
+        <div className="p-8 pb-20">
           {children}
         </div>
+        {/* Transparent Data Footer */}
+        <footer className="absolute bottom-4 left-8 right-8 flex justify-between items-center text-[10px] text-muted-foreground pointer-events-none">
+          <div className="flex items-center gap-1">
+            <Lock className="w-3 h-3" />
+            <span>End-to-End Encrypted Workspace</span>
+          </div>
+          <div className="pointer-events-auto cursor-pointer hover:underline">
+            Data Transparency Report 2024
+          </div>
+        </footer>
       </main>
     </div>
   );

@@ -4,8 +4,9 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Package, CheckCircle2, Loader2, Copy, Download, Share2 } from 'lucide-react';
+import { Package, CheckCircle2, Copy, Download, Share2, ShieldCheck, Database, FileText } from 'lucide-react';
 import { toast } from 'sonner';
+import { Progress } from '@/components/ui/progress';
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -13,12 +14,13 @@ interface ExportModalProps {
 }
 const steps = [
   { id: 1, label: 'Gathering Assets...', icon: Package },
-  { id: 2, label: 'Validating Standards...', icon: CheckCircle2 },
-  { id: 3, label: 'Sealing Cartridge...', icon: Package },
+  { id: 2, label: 'Validating Standards...', icon: ShieldCheck },
+  { id: 3, label: 'Sealing LTI 1.3 Cartridge...', icon: Package },
 ];
 export function ExportModal({ isOpen, onClose, lessonTitle }: ExportModalProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [syncProgress, setSyncProgress] = useState(0);
   useEffect(() => {
     if (isOpen && !isComplete) {
       let step = 0;
@@ -30,24 +32,35 @@ export function ExportModal({ isOpen, onClose, lessonTitle }: ExportModalProps) 
           setIsComplete(true);
           clearInterval(interval);
         }
-      }, 1500);
+      }, 1200);
       return () => clearInterval(interval);
     }
-  }, [isOpen]);
+  }, [isOpen, isComplete]);
+  useEffect(() => {
+    if (isComplete && syncProgress < 100) {
+      const timer = setTimeout(() => setSyncProgress(prev => Math.min(prev + 10, 100)), 150);
+      return () => clearTimeout(timer);
+    }
+  }, [isComplete, syncProgress]);
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("LTI URL copied to clipboard!");
   };
+  const ltiFeatures = [
+    { label: 'Gradebook Sync (AGS)', icon: Database },
+    { label: 'Rubric Transfer', icon: FileText },
+    { label: 'Deep Linking 2.0', icon: Share2 }
+  ];
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] border-3 border-ink shadow-sketch-lg bg-paper">
+      <DialogContent className="sm:max-w-[550px] border-3 border-ink shadow-sketch-lg bg-paper max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-display text-4xl text-center">LTI Bridge</DialogTitle>
-          <DialogDescription className="text-center italic text-lg">
-            Packaging "{lessonTitle}" for deployment.
+          <DialogTitle className="font-display text-4xl text-center">LTI 1.3 Advantage Bridge</DialogTitle>
+          <DialogDescription className="text-center italic text-lg text-muted-foreground">
+            Packaging "{lessonTitle}" for secure LMS deployment.
           </DialogDescription>
         </DialogHeader>
-        <div className="py-12 flex flex-col items-center justify-center min-h-[300px]">
+        <div className="py-8 flex flex-col items-center justify-center min-h-[350px]">
           <AnimatePresence mode="wait">
             {!isComplete ? (
               <motion.div 
@@ -84,18 +97,39 @@ export function ExportModal({ isOpen, onClose, lessonTitle }: ExportModalProps) 
                 key="success"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-center space-y-8 w-full"
+                className="text-center space-y-6 w-full"
               >
-                <div className="inline-block p-6 bg-highlighter border-3 border-ink shadow-sketch rotate-3">
-                  <CheckCircle2 className="w-16 h-16 text-ink mx-auto mb-2" />
-                  <span className="font-display text-3xl">DEPLOYED!</span>
+                <div className="inline-block p-4 bg-highlighter border-3 border-ink shadow-sketch rotate-2">
+                  <CheckCircle2 className="w-12 h-12 text-ink mx-auto mb-1" />
+                  <span className="font-display text-2xl">ADVANTAGE SEALED!</span>
                 </div>
-                <div className="space-y-4 w-full">
+                <div className="w-full space-y-4">
+                  <div className="p-4 bg-white border-2 border-ink text-left space-y-2">
+                    <span className="text-[10px] font-bold uppercase text-muted-foreground">LTI Advantage Features Enabled:</span>
+                    <div className="grid grid-cols-1 gap-2">
+                      {ltiFeatures.map((f, i) => (
+                        <div key={i} className="flex items-center justify-between text-xs font-bold border-b border-ink/5 pb-1">
+                          <div className="flex items-center gap-2">
+                            <f.icon className="w-3.5 h-3.5 text-ink" />
+                            {f.label}
+                          </div>
+                          <span className="text-[8px] bg-green-100 text-green-800 px-1 border border-green-800">ACTIVE</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="pt-2">
+                      <div className="flex justify-between text-[10px] font-bold mb-1 uppercase">
+                        <span>Syncing Rubrics...</span>
+                        <span>{syncProgress}%</span>
+                      </div>
+                      <Progress value={syncProgress} className="h-2 border border-ink bg-muted rounded-none" />
+                    </div>
+                  </div>
                   <div className="bg-white border-2 border-ink p-4 text-left shadow-sketch-hover">
-                    <label className="text-[10px] font-bold uppercase text-muted-foreground block mb-1">LTI 1.3 Launch URL</label>
+                    <label className="text-[10px] font-bold uppercase text-muted-foreground block mb-1">Canvas / Moodle Launch URL</label>
                     <div className="flex gap-2">
-                      <code className="bg-muted px-2 py-1 text-xs flex-1 truncate">https://flow.moodle.com/lti/1.3/launch/{lessonTitle.toLowerCase().replace(/\s+/g, '-')}</code>
-                      <button onClick={() => handleCopy('https://flow.moodle.com/lti/1.3/launch/sample')} className="p-1 hover:bg-highlighter border border-ink">
+                      <code className="bg-muted px-2 py-1 text-xs flex-1 truncate">https://engine.curricula.flow/lti/v1p3/{lessonTitle.toLowerCase().replace(/\s+/g, '-')}</code>
+                      <button onClick={() => handleCopy('https://engine.curricula.flow/lti/v1p3/sample')} className="p-1 hover:bg-highlighter border border-ink">
                         <Copy className="w-4 h-4" />
                       </button>
                     </div>
@@ -103,11 +137,11 @@ export function ExportModal({ isOpen, onClose, lessonTitle }: ExportModalProps) 
                   <div className="grid grid-cols-2 gap-4">
                     <button className="btn-sketch text-xs bg-white hover:bg-muted py-3">
                       <Download className="w-4 h-4 mr-2" />
-                      Download IMSCC
+                      Common Cartridge
                     </button>
                     <button className="btn-sketch text-xs py-3">
                       <Share2 className="w-4 h-4 mr-2" />
-                      Google Classroom
+                      Schoology Push
                     </button>
                   </div>
                 </div>
@@ -121,7 +155,7 @@ export function ExportModal({ isOpen, onClose, lessonTitle }: ExportModalProps) 
             onClick={onClose} 
             className="border-2 border-ink font-bold"
           >
-            {isComplete ? "Back to Weaver" : "Cancel Packaging"}
+            {isComplete ? "Return to The Weaver" : "Cancel Deployment"}
           </Button>
         </DialogFooter>
       </DialogContent>
