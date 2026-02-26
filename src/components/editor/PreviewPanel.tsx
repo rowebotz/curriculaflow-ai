@@ -1,8 +1,9 @@
 import React from 'react';
-import { Layers, Target, BookOpen, GraduationCap, CheckSquare, Info, ExternalLink } from 'lucide-react';
+import { Layers, Target, BookOpen, GraduationCap, CheckSquare, Info, ExternalLink, ShieldAlert } from 'lucide-react';
 import { RigorAdjuster } from './RigorAdjuster';
 import { LearningScienceConfig } from './LearningScienceConfig';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 interface PreviewProps {
   data: any;
   onUpdate?: (newData: any) => void;
@@ -10,7 +11,7 @@ interface PreviewProps {
 export function PreviewPanel({ data, onUpdate }: PreviewProps) {
   if (!data) {
     return (
-      <div className="h-full flex flex-col items-center justify-center p-12 text-center bg-muted/30 border-l-2 border-brand-black/5">
+      <div className="h-full flex flex-col items-center justify-center p-12 text-center bg-muted/30 border-l-2 border-brand-black/5 font-sans">
         <BookOpen className="w-16 h-16 mb-4 text-brand-black opacity-10" />
         <h3 className="text-xl font-bold uppercase tracking-widest opacity-30">Deployment Preview</h3>
         <p className="max-w-xs text-brand-gray text-sm mt-2">Initialize your lesson weaving session to generate the blueprint.</p>
@@ -40,15 +41,32 @@ export function PreviewPanel({ data, onUpdate }: PreviewProps) {
     formativeCheckpoints: false
   };
   return (
-    <div className="h-full p-10 overflow-y-auto bg-white border-l-2 border-brand-black/5">
+    <div className="h-full p-10 overflow-y-auto bg-white border-l-2 border-brand-black/5 font-sans">
       <div className="mb-12 text-left border-b-2 border-brand-black pb-8">
         <div className="flex justify-between items-start">
           <div className="space-y-1">
             <h3 className="text-4xl font-black text-brand-black uppercase tracking-tighter">{data.title || 'Lesson Blueprint'}</h3>
-            <p className="uppercase tracking-[0.3em] text-[10px] font-black text-brand-primary flex items-center gap-2">
-              <GraduationCap className="w-3 h-3" />
-              Instructional Tier: {rigorLevel}
-            </p>
+            <div className="flex items-center gap-4">
+              <p className="uppercase tracking-[0.3em] text-[10px] font-black text-brand-primary flex items-center gap-2">
+                <GraduationCap className="w-3 h-3" />
+                Instructional Tier: {rigorLevel}
+              </p>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="flex items-center gap-1 text-[9px] font-bold text-brand-gray hover:text-brand-primary transition-colors border border-brand-black/10 px-1.5 bg-muted/50">
+                      <ShieldAlert className="w-3 h-3" />
+                      Transparency Mode
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-brand-black text-white p-4 w-72 rounded-none border-none shadow-sketch-lg">
+                    <p className="font-bold mb-2 uppercase tracking-widest text-brand-primary text-[10px]">Trust Center Logic</p>
+                    <p className="text-[11px] leading-relaxed mb-3">Aligns module objectives with state standards using RAG (Retrieval-Augmented Generation) against the CurriculaFlow Trust Center database.</p>
+                    <a href="#" className="text-[10px] underline hover:text-brand-primary uppercase font-black">Transparency & Privacy Center</a>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
           <div className="bg-brand-black text-white px-3 py-1 text-[10px] font-bold uppercase tracking-widest shrink-0">
             v2.4 Advantage
@@ -57,16 +75,10 @@ export function PreviewPanel({ data, onUpdate }: PreviewProps) {
       </div>
       <div className="grid md:grid-cols-12 gap-6 mb-12">
         <div className="md:col-span-7">
-          <RigorAdjuster
-            currentLevel={rigorLevel}
-            onLevelChange={handleRigorChange}
-          />
+          <RigorAdjuster currentLevel={rigorLevel} onLevelChange={handleRigorChange} />
         </div>
         <div className="md:col-span-5">
-          <LearningScienceConfig
-            layers={pedagogicalLayers}
-            onUpdate={handleLayerUpdate}
-          />
+          <LearningScienceConfig layers={pedagogicalLayers} onUpdate={handleLayerUpdate} />
         </div>
       </div>
       <div className="space-y-8">
@@ -117,7 +129,7 @@ export function PreviewPanel({ data, onUpdate }: PreviewProps) {
                     </div>
                     <ul className="space-y-3">
                       {Array.isArray(mod.objectives) && mod.objectives.map((obj: string, i: number) => (
-                        <li key={i} className="flex gap-2 text-sm text-brand-black leading-relaxed">
+                        <li key={i} className="flex gap-2 text-sm text-brand-black leading-relaxed font-medium">
                           <span className="text-brand-primary font-black">•</span>
                           {obj}
                         </li>
@@ -145,14 +157,6 @@ export function PreviewPanel({ data, onUpdate }: PreviewProps) {
                   </section>
                 </div>
               </div>
-              {pedagogicalLayers.formativeCheckpoints && idx < data.modules.length - 1 && (
-                <div className="ml-4 my-8 py-3 border-l-2 border-brand-black flex items-center gap-4">
-                  <div className="w-4 h-4 bg-brand-black flex items-center justify-center -ml-[9px]">
-                     <CheckSquare className="w-2.5 h-2.5 text-white" />
-                  </div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-black/40">Formative Assessment Block</span>
-                </div>
-              )}
             </div>
           ))
         ) : (

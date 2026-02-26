@@ -5,9 +5,9 @@ export default {
   theme: {
   	extend: {
   		fontFamily: {
-  			display: ['Inter', 'sans-serif'],
-  			body: ['Inter', 'sans-serif'],
-        sans: ['Inter', 'sans-serif'],
+  			display: ['Montserrat', 'Inter', 'sans-serif'],
+  			body: ['Montserrat', 'Inter', 'sans-serif'],
+        sans: ['Montserrat', 'Inter', 'sans-serif'],
   		},
   		colors: {
   			background: 'hsl(var(--background))',
@@ -18,7 +18,7 @@ export default {
           black: '#000000',
           gray: '#71717A',
         },
-        highlighter: '#E21A23', // Mapping old keys to new brand for compatibility
+        highlighter: '#E21A23',
         correction: '#E21A23',
         ink: '#000000',
   			primary: {

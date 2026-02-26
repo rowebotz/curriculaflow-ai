@@ -2,7 +2,7 @@ import React from "react";
 import { Home, PenTool, BarChart3, Coffee, ShieldCheck, Lock, Menu } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 export function AppLayout({ children }: { children: React.ReactNode }): JSX.Element {
@@ -14,7 +14,7 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
     { name: "Insight Lens", path: "/analytics", icon: BarChart3 },
   ];
   const NavContent = () => (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full font-sans">
       <div className="mb-12">
         <h1 className="font-display text-2xl font-black text-brand-black tracking-tighter">
           CURRICULA<span className="text-brand-primary">FLOW</span>
@@ -57,14 +57,12 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
   );
   return (
     <TooltipProvider>
-      <div className="flex h-screen w-full overflow-hidden bg-paper">
-        {/* Desktop Sidebar */}
+      <div className="flex h-screen w-full overflow-hidden bg-paper font-sans">
         {!isMobile && (
           <aside className="w-64 notebook-margin bg-white flex flex-col p-6 z-30 shrink-0">
             <NavContent />
           </aside>
         )}
-        {/* Mobile Header */}
         <div className="flex-1 relative overflow-y-auto flex flex-col">
           {isMobile && (
             <header className="h-16 border-b-2 border-brand-black bg-white flex items-center justify-between px-4 z-40 shrink-0">
@@ -91,7 +89,7 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
                 <span>Secure Professional Workspace</span>
               </div>
               <div className="cursor-pointer hover:text-brand-primary transition-colors">
-                �� 2024 CurriculaFlow Systems
+                Stephen Rowe's AI Job Application Tool
               </div>
             </footer>
           </main>

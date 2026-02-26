@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, Bot, User, Sparkles, Loader2 } from 'lucide-react';
 import { chatService } from '@/lib/chat';
 import { cn } from '@/lib/utils';
@@ -10,62 +10,24 @@ interface Message {
 interface ChatPanelProps {
   onBlueprintUpdate: (data: any) => void;
   autoAlignTrigger?: number;
+  sessionId?: string;
 }
-export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0 }: ChatPanelProps) {
+export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: "Instructional Engine initialized. Provide your learning objectives or content snippets to generate a standards-aligned lesson blueprint." }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
-  const scrollToBottom = (instant = false) => {
+  const scrollToBottom = useCallback((instant = false) => {
     if (scrollAnchorRef.current) {
       scrollAnchorRef.current.scrollIntoView({
         behavior: instant ? 'auto' : 'smooth',
         block: 'end'
       });
     }
-  };
-  // Restore history on mount or session change
-  useEffect(() => {
-    const restoreHistory = async () => {
-      try {
-        const response = await chatService.getMessages();
-        if (response.success && response.data?.messages) {
-          const history = response.data.messages
-            .filter(m => m.role === 'user' || m.role === 'assistant')
-            .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));
-          if (history.length > 0) {
-            setMessages(history);
-            // Extract the latest blueprint from history
-            for (let i = history.length - 1; i >= 0; i--) {
-              const jsonMatch = history[i].content.match(/```json\s*([\s\S]*?)\s*```/);
-              if (jsonMatch && jsonMatch[1]) {
-                try {
-                  const parsed = JSON.parse(jsonMatch[1]);
-                  onBlueprintUpdate(parsed);
-                  break;
-                } catch (e) { /* continue */ }
-              }
-            }
-          }
-        }
-      } catch (e) {
-        console.error("Failed to restore history", e);
-      }
-    };
-    restoreHistory();
   }, []);
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping]);
-  // Handle External Auto-Align Trigger
-  useEffect(() => {
-    if (autoAlignTrigger > 0) {
-      handleSend("Please review the current blueprint and ensure it fully aligns with the latest pedagogical standards and rigor levels. Adjust modules if necessary.");
-    }
-  }, [autoAlignTrigger]);
-  const handleSend = async (forcedInput?: string) => {
+  const handleSend = useCallback(async (forcedInput?: string) => {
     const messageContent = forcedInput || input;
     if (!messageContent.trim() || isTyping) return;
     const userMsg = { role: 'user' as const, content: messageContent };
@@ -102,9 +64,47 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0 }: ChatPanel
     } finally {
       setIsTyping(false);
     }
-  };
+  }, [input, isTyping, onBlueprintUpdate]);
+  useEffect(() => {
+    if (!sessionId) return;
+    chatService.switchSession(sessionId);
+    const restoreHistory = async () => {
+      try {
+        const response = await chatService.getMessages();
+        if (response.success && response.data?.messages) {
+          const history = response.data.messages
+            .filter(m => m.role === 'user' || m.role === 'assistant')
+            .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));
+          if (history.length > 0) {
+            setMessages(history);
+            for (let i = history.length - 1; i >= 0; i--) {
+              const jsonMatch = history[i].content.match(/```json\s*([\s\S]*?)\s*```/);
+              if (jsonMatch && jsonMatch[1]) {
+                try {
+                  const parsed = JSON.parse(jsonMatch[1]);
+                  onBlueprintUpdate(parsed);
+                  break;
+                } catch (e) { /* continue */ }
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to restore history", e);
+      }
+    };
+    restoreHistory();
+  }, [sessionId, onBlueprintUpdate]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping, scrollToBottom]);
+  useEffect(() => {
+    if (autoAlignTrigger > 0) {
+      handleSend("Please review the current blueprint and ensure it fully aligns with the latest pedagogical standards and rigor levels. Adjust modules if necessary.");
+    }
+  }, [autoAlignTrigger, handleSend]);
   return (
-    <div className="flex flex-col h-full bg-white relative border-r-2 border-brand-black/5">
+    <div className="flex flex-col h-full bg-white relative border-r-2 border-brand-black/5 font-sans">
       <div className="bg-brand-black text-white px-4 py-3 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em]">
         <div className="flex items-center gap-2">
           <Bot className="w-4 h-4 text-brand-primary" />
@@ -142,7 +142,7 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0 }: ChatPanel
           {isTyping && (
             <div className="flex items-center gap-3 p-5 border-2 border-dashed border-brand-black/20 bg-muted/30">
               <Loader2 className="w-4 h-4 animate-spin text-brand-primary" />
-              <span className="font-black uppercase tracking-widest text-[10px] text-brand-black/60 italic">Mapping standards & scaffolding...</span>
+              <span className="font-black uppercase tracking-widest text-[10px] text-brand-black/60 italic font-bold">Mapping standards & scaffolding...</span>
             </div>
           )}
           <div ref={scrollAnchorRef} className="h-4" />
@@ -155,7 +155,7 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0 }: ChatPanel
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
             placeholder="Describe lesson objectives or paste content..."
-            className="w-full input-sketch min-h-[90px] max-h-[220px] resize-none pr-14 text-sm"
+            className="w-full input-sketch min-h-[90px] max-h-[220px] resize-none pr-14 text-sm font-sans"
           />
           <button
             onClick={() => handleSend()}

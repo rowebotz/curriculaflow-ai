@@ -1,8 +1,8 @@
 import React from 'react';
-import { Label } from '@/components/ui/label';
-import { Info } from 'lucide-react';
+import { Info, BookOpen } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 interface RigorAdjusterProps {
   currentLevel: string;
   onLevelChange: (level: string) => void;
@@ -14,8 +14,18 @@ const levels = [
 ];
 export function RigorAdjuster({ currentLevel, onLevelChange }: RigorAdjusterProps) {
   const activeLevel = levels.find(l => l.id === currentLevel.toLowerCase()) || levels[1];
+  const handleMHLink = () => {
+    toast.promise(
+      new Promise((resolve) => setTimeout(resolve, 1500)),
+      {
+        loading: 'Searching McGraw Hill Library for standard-aligned content...',
+        success: 'Linked McGraw Hill Adaptive ALEKS Item successfully.',
+        error: 'Failed to connect to MH Library.',
+      }
+    );
+  };
   return (
-    <div className="p-6 border-2 border-brand-black bg-white shadow-sketch hover:shadow-sketch-lg transition-all">
+    <div className="p-6 border-2 border-brand-black bg-white shadow-sketch hover:shadow-sketch-lg transition-all font-sans">
       <div className="flex items-center justify-between mb-6">
         <h5 className="font-black uppercase text-[10px] tracking-[0.2em] text-brand-black">Differentiation Engine</h5>
         <TooltipProvider>
@@ -29,7 +39,7 @@ export function RigorAdjuster({ currentLevel, onLevelChange }: RigorAdjusterProp
           </Tooltip>
         </TooltipProvider>
       </div>
-      <div className="flex bg-muted p-1 border-2 border-brand-black">
+      <div className="flex bg-muted p-1 border-2 border-brand-black mb-6">
         {levels.map((level) => (
           <button
             key={level.id}
@@ -45,13 +55,22 @@ export function RigorAdjuster({ currentLevel, onLevelChange }: RigorAdjusterProp
           </button>
         ))}
       </div>
-      <div className="mt-6 flex gap-3 p-4 bg-muted/50 border-l-4 border-brand-primary">
-        <div className="flex-1">
-          <p className="text-[10px] font-black uppercase text-brand-primary mb-1">Pedagogical Intent</p>
-          <p className="text-xs text-brand-black font-medium leading-relaxed italic">
-            "{activeLevel.desc}"
-          </p>
+      <div className="space-y-4">
+        <div className="flex gap-3 p-4 bg-muted/50 border-l-4 border-brand-primary">
+          <div className="flex-1">
+            <p className="text-[10px] font-black uppercase text-brand-primary mb-1">Pedagogical Intent</p>
+            <p className="text-xs text-brand-black font-medium leading-relaxed italic">
+              "{activeLevel.desc}"
+            </p>
+          </div>
         </div>
+        <button
+          onClick={handleMHLink}
+          className="w-full flex items-center justify-center gap-2 py-2 border-2 border-brand-black text-[10px] font-black uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all group"
+        >
+          <BookOpen className="w-3 h-3 group-hover:scale-110 transition-transform" />
+          Link MH Reader Passage
+        </button>
       </div>
     </div>
   );

@@ -34,8 +34,9 @@ export function EditorPage() {
   const WorkspaceContent = () => (
     <ResizablePanelGroup direction="horizontal" className="h-[calc(100vh-160px)] border-3 border-ink shadow-sketch-lg">
       <ResizablePanel defaultSize={40} minSize={30}>
-        <ChatPanel 
-          onBlueprintUpdate={handleDataUpdate} 
+        <ChatPanel
+          sessionId={sessionId}
+          onBlueprintUpdate={handleDataUpdate}
           autoAlignTrigger={autoAlignTrigger}
         />
       </ResizablePanel>
@@ -52,8 +53,9 @@ export function EditorPage() {
         <TabsTrigger value="preview" className="font-bold data-[state=active]:bg-brand-primary data-[state=active]:text-white">Blueprint</TabsTrigger>
       </TabsList>
       <TabsContent value="chat" className="h-[calc(100vh-280px)]">
-        <ChatPanel 
-          onBlueprintUpdate={handleDataUpdate} 
+        <ChatPanel
+          sessionId={sessionId}
+          onBlueprintUpdate={handleDataUpdate}
           autoAlignTrigger={autoAlignTrigger}
         />
       </TabsContent>
