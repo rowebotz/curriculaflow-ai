@@ -24,6 +24,7 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
   const [isRestoring, setIsRestoring] = useState(false);
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
   const isMounted = useRef(true);
+  const lastProcessedTrigger = useRef(0);
   useEffect(() => {
     isMounted.current = true;
     return () => { isMounted.current = false; };
@@ -52,16 +53,14 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
     }
     return false;
   }, [onBlueprintUpdate]);
-  const handleSend = useCallback(async (forcedInput?: string) => {
-    const messageContent = (forcedInput || input).trim();
-    if (!messageContent || isTyping || isRestoring) return;
-    const userMsg = { role: 'user' as const, content: messageContent };
+  const sendMessage = useCallback(async (content: string) => {
+    if (!content.trim() || isTyping || isRestoring) return;
+    const userMsg = { role: 'user' as const, content };
     setMessages(prev => [...prev, userMsg]);
-    if (!forcedInput) setInput('');
     setIsTyping(true);
     let fullAssistantContent = '';
     try {
-      await chatService.sendMessage(messageContent, undefined, (chunk) => {
+      await chatService.sendMessage(content, undefined, (chunk) => {
         if (!isMounted.current) return;
         fullAssistantContent += chunk;
         setMessages(prev => {
@@ -84,7 +83,13 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
     } finally {
       if (isMounted.current) setIsTyping(false);
     }
-  }, [input, isTyping, isRestoring, extractAndUpdateBlueprint]);
+  }, [isTyping, isRestoring, extractAndUpdateBlueprint]);
+  const handleUserSend = () => {
+    if (!input.trim()) return;
+    const currentInput = input;
+    setInput('');
+    sendMessage(currentInput);
+  };
   useEffect(() => {
     if (!sessionId) return;
     setMessages([INITIAL_MESSAGE]);
@@ -122,10 +127,11 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
     scrollToBottom();
   }, [messages, isTyping, scrollToBottom]);
   useEffect(() => {
-    if (autoAlignTrigger > 0 && !isRestoring && !isTyping) {
-      handleSend("Please review the current blueprint and ensure it fully aligns with the latest pedagogical standards and rigor levels. Adjust modules if necessary.");
+    if (autoAlignTrigger > lastProcessedTrigger.current && !isRestoring && !isTyping) {
+      lastProcessedTrigger.current = autoAlignTrigger;
+      sendMessage("Please review the current blueprint and ensure it fully aligns with the latest pedagogical standards and rigor levels. Adjust modules if necessary.");
     }
-  }, [autoAlignTrigger, handleSend, isRestoring, isTyping]);
+  }, [autoAlignTrigger, sendMessage, isRestoring, isTyping]);
   return (
     <div className="flex flex-col h-full bg-white relative border-r-2 border-brand-black/5 font-sans">
       <div className="bg-brand-black text-white px-4 py-3 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em]">
@@ -183,13 +189,13 @@ export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0,
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
+            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleUserSend())}
             placeholder="Describe lesson objectives or paste content..."
             disabled={isRestoring || isTyping}
             className="w-full input-sketch min-h-[90px] max-h-[220px] resize-none pr-14 text-sm font-sans disabled:opacity-50"
           />
           <button
-            onClick={() => handleSend()}
+            onClick={handleUserSend}
             disabled={isTyping || isRestoring || !input.trim()}
             className="absolute bottom-4 right-3 p-3 bg-brand-primary text-white border-2 border-brand-black shadow-sketch hover:shadow-sketch-hover active:translate-y-0.5 disabled:opacity-30 disabled:grayscale transition-all"
           >

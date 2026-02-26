@@ -5,16 +5,17 @@ import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-export function AppLayout({ children }: { children: React.ReactNode }): JSX.Element {
-  const location = useLocation();
-  const isMobile = useIsMobile();
-  const navItems = [
-    { name: "Sketchpad", path: "/", icon: Home },
-    { name: "The Weaver", path: "/editor", icon: PenTool },
-    { name: "Insight Lens", path: "/analytics", icon: BarChart3 },
-    { name: "Hire Stephen?", path: "/why-hire", icon: Briefcase },
-  ];
-  const NavContent = () => (
+const navItems = [
+  { name: "Sketchpad", path: "/", icon: Home },
+  { name: "The Weaver", path: "/editor", icon: PenTool },
+  { name: "Insight Lens", path: "/analytics", icon: BarChart3 },
+  { name: "Hire Stephen?", path: "/why-hire", icon: Briefcase },
+];
+interface NavContentProps {
+  pathname: string;
+}
+function NavContent({ pathname }: NavContentProps) {
+  return (
     <div className="flex flex-col h-full font-sans">
       <div className="mb-12">
         <h1 className="font-display text-2xl font-black text-brand-black tracking-tighter">
@@ -29,7 +30,7 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
             to={item.path}
             className={cn(
               "flex items-center gap-3 p-3 font-bold transition-all border-2 border-transparent text-sm uppercase tracking-wide",
-              location.pathname === item.path
+              pathname === item.path
                 ? "bg-brand-primary text-white border-brand-black shadow-sketch"
                 : "hover:bg-muted text-brand-black"
             )}
@@ -56,12 +57,16 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
       </div>
     </div>
   );
+}
+export function AppLayout({ children }: { children: React.ReactNode }): JSX.Element {
+  const location = useLocation();
+  const isMobile = useIsMobile();
   return (
     <TooltipProvider>
       <div className="flex h-screen w-full overflow-hidden bg-paper font-sans">
         {!isMobile && (
           <aside className="w-64 notebook-margin bg-white flex flex-col p-6 z-30 shrink-0">
-            <NavContent />
+            <NavContent pathname={location.pathname} />
           </aside>
         )}
         <div className="flex-1 relative overflow-y-auto flex flex-col">
@@ -77,9 +82,7 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
                   </button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-72 p-6 bg-white border-r-3 border-brand-black">
-                  <TooltipProvider>
-                    <NavContent />
-                  </TooltipProvider>
+                  <NavContent pathname={location.pathname} />
                 </SheetContent>
               </Sheet>
             </header>

@@ -27,7 +27,7 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
       <div className="h-full flex flex-col items-center justify-center p-12 text-center bg-muted/30 border-l-2 border-brand-black/5 font-sans">
         <BookOpen className="w-16 h-16 mb-4 text-brand-black opacity-10" />
         <h3 className="text-xl font-bold uppercase tracking-widest opacity-30">Deployment Preview</h3>
-        <p className="max-w-xs text-brand-gray text-sm mt-2">Provide instructional input in the conversation panel to generate your blueprint.</p>
+        <p className="max-w-xs text-brand-gray text-sm mt-2 font-medium">Your pedagogical blueprint will appear here once you begin weaving with the AI.</p>
       </div>
     );
   }
@@ -80,10 +80,10 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
                       Transparency Mode
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent className="bg-brand-black text-white p-4 w-72 rounded-none border-none shadow-sketch-lg">
+                  <TooltipContent className="bg-brand-black text-white p-4 w-72 rounded-none border-none shadow-sketch-lg font-sans">
                     <p className="font-bold mb-2 uppercase tracking-widest text-brand-primary text-[10px]">Trust Center Logic</p>
-                    <p className="text-[11px] leading-relaxed mb-3 font-sans">Aligns module objectives with state standards using RAG against the CurriculaFlow database.</p>
-                    <a href="#" className="text-[10px] underline hover:text-brand-primary uppercase font-black font-sans focus:outline-none">Transparency Center</a>
+                    <p className="text-[11px] leading-relaxed mb-3">Aligns module objectives with state standards using RAG against the CurriculaFlow database.</p>
+                    <a href="#" className="text-[10px] underline hover:text-brand-primary uppercase font-black focus:outline-none">Transparency Center</a>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -119,14 +119,14 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
             const headingId = `heading-${modId}`;
             const titleLower = (mod.title || '').toLowerCase();
             const modeLower = (mod.mode || '').toLowerCase();
-            const isStage = titleLower.includes('warmup') || 
-                           titleLower.includes('reflection') || 
+            const isStage = titleLower.includes('warmup') ||
+                           titleLower.includes('reflection') ||
                            titleLower.includes('checkpoint') ||
                            modeLower.includes('warmup') ||
                            modeLower.includes('checkpoint');
             return (
-              <article 
-                key={modId} 
+              <article
+                key={modId}
                 className="relative pl-10 border-l-2 border-brand-black/10"
                 role="listitem"
                 aria-labelledby={headingId}
@@ -151,8 +151,8 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
                               <Info className="w-4 h-4" />
                             </button>
                           </TooltipTrigger>
-                          <TooltipContent className="bg-brand-black text-white p-3 text-[10px] font-bold uppercase rounded-none max-w-[200px] border-none">
-                            Backward Design: Module was architected to ensure alignment with standard {mod.standards?.[0] || 'compliance'}.
+                          <TooltipContent className="bg-brand-black text-white p-3 text-[10px] font-bold uppercase rounded-none max-w-[200px] border-none font-sans">
+                            Backward Design: Module architected for standard {mod.standards?.[0] || 'compliance'}.
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -176,10 +176,7 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
                                   98% AI CONFIDENCE
                                 </span>
                              </div>
-                             <p 
-                               className="leading-relaxed text-brand-gray mb-3 italic text-[11px]"
-                               title={`Instructional rationale for ${s}`}
-                             >
+                             <p className="leading-relaxed text-brand-gray mb-3 italic text-[11px]">
                                {mod.rationale?.[s] || "Mapping verified via CurriculaFlow RAG standards engine. Strategies target specific standard competencies."}
                              </p>
                              <button className="w-full py-2 bg-brand-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-primary/90 transition-colors focus:ring-2 focus:ring-offset-1">
@@ -214,7 +211,7 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
                       </div>
                       <div className="space-y-3">
                         <div className="p-3 bg-muted text-[11px] font-bold border-l-4 border-brand-black uppercase tracking-tight">
-                          {mod.mode || (rigorLevel === 'ELL' ? 'Simplified Lexicon & Visuals' : 'Standard Direct Instruction')}
+                          {mod.mode || 'Standard Direct Instruction'}
                         </div>
                         {pedagogicalLayers.retrievalPractice && (
                           <div className="p-3 border-2 border-brand-black border-dashed bg-brand-primary/5 text-[10px] font-black uppercase text-brand-primary flex items-center gap-2">
