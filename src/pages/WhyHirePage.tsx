@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { SketchCard } from '@/components/ui/sketch-card';
-import { Award, Globe, Zap, Cpu, GraduationCap, Target } from 'lucide-react';
+import { Award, Globe, Zap, Cpu, GraduationCap, Target, ShieldCheck } from 'lucide-react';
 export function WhyHirePage() {
   return (
     <AppLayout>
@@ -27,14 +27,14 @@ export function WhyHirePage() {
                 </div>
                 <div className="space-y-6 text-lg leading-relaxed text-brand-black font-medium">
                   <p>
-                    Stephen Rowe builds learning systems that actually get used. As Program Director of 
-                    <span className="text-brand-primary font-bold"> Cato Courses</span>, he led the creation and launch 
-                    of a custom LMS platform in under a year, working alongside scholars, designers, and executives 
+                    Stephen Rowe builds learning systems that actually get used. As Program Director of
+                    <span className="text-brand-primary font-bold"> Cato Courses</span>, he led the creation and launch
+                    of a custom LMS platform in under a year, working alongside scholars, designers, and executives
                     to bring rigorous academic content into a modern, digital-first experience.
                   </p>
                   <p>
-                    He implemented <span className="underline decoration-brand-primary decoration-2 underline-offset-4">AI chatbots modeled on historical thinkers</span>, 
-                    interactive learning tools, analytics dashboards, and secure authentication systems, ensuring 
+                    He implemented <span className="underline decoration-brand-primary decoration-2 underline-offset-4">AI chatbots modeled on historical thinkers</span>,
+                    interactive learning tools, analytics dashboards, and secure authentication systems, ensuring
                     the platform was not only innovative but scalable and measurable in its impact.
                   </p>
                 </div>
@@ -46,13 +46,13 @@ export function WhyHirePage() {
                 </div>
                 <div className="space-y-6 text-lg leading-relaxed text-brand-black font-medium">
                   <p>
-                    Before that, as Director of Digital Training at the <span className="text-brand-primary font-bold">Leadership Institute</span>, 
-                    Stephen helped train more than <span className="bg-brand-primary/10 px-1 font-bold">24,000 students across 20 countries</span> 
+                    Before that, as Director of Digital Training at the <span className="text-brand-primary font-bold">Leadership Institute</span>,
+                    Stephen helped train more than <span className="bg-brand-primary/10 px-1 font-bold">24,000 students across 20 countries</span>
                     and built an online training platform that enrolled over 17,000 learners in four years.
                   </p>
                   <p>
-                    He delivered hundreds of hours of live instruction and taught practical AI integration long 
-                    before it became a trend. Throughout his career, he has focused on reducing friction for 
+                    He delivered hundreds of hours of live instruction and taught practical AI integration long
+                    before it became a trend. Throughout his career, he has focused on reducing friction for
                     educators, improving learner engagement, and using data to strengthen outcomes.
                   </p>
                 </div>
@@ -64,14 +64,14 @@ export function WhyHirePage() {
                 </div>
                 <div className="space-y-6 text-lg leading-relaxed text-brand-black font-medium">
                   <p>
-                    <span className="font-black text-brand-primary uppercase tracking-tighter">CurriculaFlow</span> reflects 
-                    that same approach. It is not a theoretical concept but a working example of how AI can support 
-                    standards alignment, learning science, interoperability, and responsible data governance in a 
+                    <span className="font-black text-brand-primary uppercase tracking-tighter">CurriculaFlow</span> reflects
+                    that same approach. It is not a theoretical concept but a working example of how AI can support
+                    standards alignment, learning science, interoperability, and responsible data governance in a
                     real classroom environment.
                   </p>
                   <p>
-                    Stephen approaches AI as <span className="font-bold underline decoration-brand-black">infrastructure, not novelty</span>. 
-                    He builds tools that empower teachers, respect students, and scale with institutional needs. 
+                    Stephen approaches AI as <span className="font-bold underline decoration-brand-black">infrastructure, not novelty</span>.
+                    He builds tools that empower teachers, respect students, and scale with institutional needs.
                     That is the mindset he brings to every challenge.
                   </p>
                 </div>
