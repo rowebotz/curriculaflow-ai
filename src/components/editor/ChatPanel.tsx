@@ -9,13 +9,17 @@ interface Message {
 }
 export function ChatPanel({ onBlueprintUpdate }: { onBlueprintUpdate: (data: any) => void }) {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: "Hello! I'm CurriculaBot. Paste your lesson ideas, a syllabus snippet, or just a topic, and I'll help you weave it into a structured module." }
+    { role: 'assistant', content: "Instructional Engine initialized. Provide your learning objectives or content snippets to generate a McGraw Hill-aligned lesson blueprint." }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
-  const scrollToBottom = () => {
-    scrollAnchorRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // Robust scrolling to bottom
+  const scrollToBottom = (instant = false) => {
+    scrollAnchorRef.current?.scrollIntoView({ 
+      behavior: instant ? 'auto' : 'smooth',
+      block: 'end'
+    });
   };
   useEffect(() => {
     scrollToBottom();
@@ -49,66 +53,74 @@ export function ChatPanel({ onBlueprintUpdate }: { onBlueprintUpdate: (data: any
           const parsedData = JSON.parse(jsonMatch[1]);
           if (parsedData) onBlueprintUpdate(parsedData);
         } catch (e) {
-          console.warn("Failed to parse AI JSON block:", e);
+          console.warn("Blueprint extraction failed:", e);
         }
       }
     } catch (e) {
       console.error(e);
-      setMessages(prev => [...prev, { role: 'assistant', content: "I'm sorry, I hit a snag while processing that request. Could you try again?" }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: "Connection interrupted. Please resubmit the instructional request." }]);
     } finally {
       setIsTyping(false);
     }
   };
   return (
-    <div className="flex flex-col h-full bg-white relative">
-      <div className="bg-ink text-white px-4 py-2 flex items-center justify-between text-sm font-bold">
+    <div className="flex flex-col h-full bg-white relative border-r-2 border-brand-black/5">
+      <div className="bg-brand-black text-white px-4 py-3 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em]">
         <div className="flex items-center gap-2">
-          <Bot className="w-4 h-4" />
-          <span>CURRICULABOT v1.0</span>
+          <Bot className="w-4 h-4 text-brand-primary" />
+          <span>CurriculaBot Engine</span>
         </div>
-        <Sparkles className="w-4 h-4 text-highlighter" />
+        <Sparkles className="w-4 h-4 text-brand-primary" />
       </div>
-      <ScrollArea className="flex-1 p-4">
-        <div className="space-y-6 pb-4">
+      <ScrollArea className="flex-1 p-6">
+        <div className="space-y-8 pb-4">
           {messages.map((m, i) => (
             <div key={i} className={cn("flex flex-col", m.role === 'user' ? "items-end" : "items-start")}>
               <div className={cn(
-                "max-w-[90%] p-4 border-2 border-ink shadow-sketch transition-all",
-                m.role === 'user' ? "bg-muted rotate-1" : "bg-white -rotate-1"
+                "max-w-[92%] p-5 border-2 border-brand-black shadow-sketch transition-all",
+                m.role === 'user' ? "bg-muted font-medium" : "bg-white"
               )}>
-                <div className="flex items-center gap-2 mb-2 text-xs font-bold uppercase text-muted-foreground">
-                  {m.role === 'user' ? <User className="w-3 h-3" /> : <Bot className="w-3 h-3" />}
-                  <span>{m.role === 'user' ? 'Educator' : 'CurriculaBot'}</span>
+                <div className="flex items-center gap-2 mb-3 text-[10px] font-black uppercase tracking-widest text-brand-gray">
+                  {m.role === 'user' ? <User className="w-3 h-3" /> : <Bot className="w-3 h-3 text-brand-primary" />}
+                  <span>{m.role === 'user' ? 'Educator' : 'Assistant'}</span>
                 </div>
-                <div className="text-lg leading-relaxed whitespace-pre-wrap">
-                  {/* Strip out the raw JSON block for display if desired, but here we show full for transparency */}
-                  {m.content.replace(/```json\s*[\s\S]*?\s*```/g, ' [Blueprint Updated] ')}
+                <div className="text-base leading-relaxed whitespace-pre-wrap text-brand-black">
+                  {m.content.split(/```json\s*[\s\S]*?\s*```/g).map((part, idx, arr) => (
+                    <React.Fragment key={idx}>
+                      {part}
+                      {idx < arr.length - 1 && (
+                        <span className="block my-4 p-3 bg-brand-primary/5 border-l-4 border-brand-primary text-brand-primary font-black uppercase text-[10px] tracking-widest">
+                          [Blueprint Verified & Updated]
+                        </span>
+                      )}
+                    </React.Fragment>
+                  ))}
                 </div>
               </div>
             </div>
           ))}
           {isTyping && (
-            <div className="flex items-center gap-2 p-4 border-2 border-dashed border-ink/20 animate-pulse bg-highlighter/5">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span className="font-bold italic text-sm">Sketching pedagogical structures...</span>
+            <div className="flex items-center gap-3 p-5 border-2 border-dashed border-brand-black/20 bg-muted/30">
+              <Loader2 className="w-4 h-4 animate-spin text-brand-primary" />
+              <span className="font-black uppercase tracking-widest text-[10px] text-brand-black/60 italic">Mapping standards & scaffolding...</span>
             </div>
           )}
-          <div ref={scrollAnchorRef} />
+          <div ref={scrollAnchorRef} className="h-4" />
         </div>
       </ScrollArea>
-      <div className="p-4 border-t-3 border-ink bg-paper/50">
+      <div className="p-4 border-t-3 border-brand-black bg-white">
         <div className="relative">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
-            placeholder="Suggest a module on..."
-            className="w-full input-sketch min-h-[80px] max-h-[200px] resize-none pr-12"
+            placeholder="Describe lesson objectives or paste content..."
+            className="w-full input-sketch min-h-[90px] max-h-[220px] resize-none pr-14 text-sm"
           />
           <button
             onClick={handleSend}
             disabled={isTyping || !input.trim()}
-            className="absolute bottom-4 right-2 p-2 bg-highlighter border-2 border-ink shadow-sketch hover:shadow-sketch-hover active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute bottom-4 right-3 p-3 bg-brand-primary text-white border-2 border-brand-black shadow-sketch hover:shadow-sketch-hover active:translate-y-0.5 disabled:opacity-30 disabled:grayscale transition-all"
           >
             <Send className="w-5 h-5" />
           </button>

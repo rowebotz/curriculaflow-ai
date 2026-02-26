@@ -18,27 +18,32 @@ export function LearningScienceConfig({ layers, onUpdate }: ConfigProps) {
     { id: 'formativeCheckpoints', label: 'Formative Checkpoints', icon: CheckSquare, desc: 'Built-in "Stop & Checks" for mastery pulse.' }
   ];
   return (
-    <div className="p-4 border-2 border-ink bg-[#FFF9C4] shadow-sketch rotate-1 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-8 h-8 bg-black/5 -rotate-45 translate-x-4 -translate-y-4" />
-      <h5 className="font-display text-xl mb-4 border-b border-ink/20 pb-1">Science Layers</h5>
-      <div className="space-y-4">
+    <div className="p-6 border-2 border-brand-black bg-white shadow-sketch hover:shadow-sketch-lg transition-all relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-12 h-12 bg-brand-primary/5 -rotate-45 translate-x-6 -translate-y-6" />
+      <h5 className="font-display text-2xl mb-6 border-b-2 border-brand-black/10 pb-2 text-brand-black uppercase tracking-tighter">
+        Science <span className="text-brand-primary">Layers</span>
+      </h5>
+      <div className="space-y-5">
         {configs.map((cfg) => (
-          <div key={cfg.id} className="flex items-center gap-3">
-            <Checkbox 
-              id={cfg.id} 
-              checked={!!layers[cfg.id as keyof typeof layers]} 
+          <div key={cfg.id} className="flex items-center gap-3 group">
+            <Checkbox
+              id={cfg.id}
+              checked={!!layers[cfg.id as keyof typeof layers]}
               onCheckedChange={(checked) => onUpdate(cfg.id, !!checked)}
-              className="border-2 border-ink data-[state=checked]:bg-ink"
+              className="border-2 border-brand-black data-[state=checked]:bg-brand-primary data-[state=checked]:border-brand-primary w-5 h-5 rounded-none"
             />
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Label htmlFor={cfg.id} className="font-bold flex items-center gap-2 cursor-pointer text-sm">
+                  <Label 
+                    htmlFor={cfg.id} 
+                    className="font-bold flex items-center gap-2 cursor-pointer text-sm uppercase tracking-tight text-brand-black group-hover:text-brand-primary transition-colors"
+                  >
                     <cfg.icon className="w-4 h-4" />
                     {cfg.label}
                   </Label>
                 </TooltipTrigger>
-                <TooltipContent side="right" className="bg-ink text-white p-2 text-xs max-w-[150px]">
+                <TooltipContent side="right" className="bg-brand-black text-white p-3 text-[10px] font-bold uppercase rounded-none border-none max-w-[150px]">
                   {cfg.desc}
                 </TooltipContent>
               </Tooltip>
