@@ -112,6 +112,7 @@ export function EditorPage() {
         <ExportModal
           isOpen={isExportOpen}
           onClose={() => setIsExportOpen(false)}
+          fullData={lessonData}
           lessonTitle={lessonData?.title || 'Untitled Lesson'}
         />
       </div>
