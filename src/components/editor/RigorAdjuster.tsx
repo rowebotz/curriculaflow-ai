@@ -8,12 +8,13 @@ interface RigorAdjusterProps {
   onLevelChange: (level: string) => void;
 }
 const levels = [
-  { id: 'ell', name: 'ELL/Remedial', desc: 'High visual support, simplified lexicon, intensive scaffolding.' },
-  { id: 'standard', name: 'Standard', desc: 'Aligned to grade-level standards with moderate scaffolding.' },
-  { id: 'advanced', name: 'Advanced', desc: 'Extended inquiry, complex text structures, high DOK depth.' }
+  { id: 'ELL', name: 'ELL/Remedial', desc: 'High visual support, simplified lexicon, intensive scaffolding.' },
+  { id: 'Standard', name: 'Standard', desc: 'Aligned to grade-level standards with moderate scaffolding.' },
+  { id: 'Advanced', name: 'Advanced', desc: 'Extended inquiry, complex text structures, high DOK depth.' }
 ];
 export function RigorAdjuster({ currentLevel, onLevelChange }: RigorAdjusterProps) {
-  const activeLevel = levels.find(l => l.id === currentLevel.toLowerCase()) || levels[1];
+  // Case-insensitive match to find current level, defaulting to Standard
+  const activeLevel = levels.find(l => l.id.toLowerCase() === currentLevel.toLowerCase()) || levels[1];
   const handleMHLink = () => {
     toast.promise(
       new Promise((resolve) => setTimeout(resolve, 1500)),
@@ -46,7 +47,7 @@ export function RigorAdjuster({ currentLevel, onLevelChange }: RigorAdjusterProp
             onClick={() => onLevelChange(level.id)}
             className={cn(
               "flex-1 py-2 text-[10px] font-black uppercase tracking-wider transition-all",
-              currentLevel.toLowerCase() === level.id
+              currentLevel.toLowerCase() === level.id.toLowerCase()
                 ? "bg-brand-primary text-white shadow-sketch"
                 : "text-brand-black hover:bg-brand-black/5"
             )}

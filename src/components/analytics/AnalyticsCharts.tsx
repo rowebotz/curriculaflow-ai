@@ -1,7 +1,7 @@
 import React, { useId } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  AreaChart, Area, Cell
+  AreaChart, Area, Cell, LabelList
 } from 'recharts';
 import { Star, AlertTriangle, CheckCircle2 } from 'lucide-react';
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -48,6 +48,30 @@ export const EngagementTrends = ({ data }: { data: any[] }) => {
     </ResponsiveContainer>
   );
 };
+const CustomMasteryLabel = (props: any) => {
+  const { x, y, width, height, value } = props;
+  const iconX = x + width + 10;
+  const iconY = y + height / 2 - 8;
+  if (value > 85) {
+    return (
+      <foreignObject x={iconX} y={iconY} width="16" height="16">
+        <Star className="w-4 h-4 text-brand-primary" />
+      </foreignObject>
+    );
+  }
+  if (value > 70) {
+    return (
+      <foreignObject x={iconX} y={iconY} width="16" height="16">
+        <CheckCircle2 className="w-4 h-4 text-brand-black" />
+      </foreignObject>
+    );
+  }
+  return (
+    <foreignObject x={iconX} y={iconY} width="16" height="16">
+      <AlertTriangle className="w-4 h-4 text-brand-gray" />
+    </foreignObject>
+  );
+};
 export const MasteryHeatmap = ({ data }: { data: any[] }) => {
   const idPrefix = useId().replace(/:/g, '');
   const stripeId = `pattern-stripes-${idPrefix}`;
@@ -57,15 +81,15 @@ export const MasteryHeatmap = ({ data }: { data: any[] }) => {
     if (value > 70) return `url(#${dotId})`;
     return `url(#${stripeId})`;
   };
-  const getIcon = (value: number) => {
-    if (value > 85) return <Star className="w-3.5 h-3.5 text-brand-primary" />;
-    if (value > 70) return <CheckCircle2 className="w-3.5 h-3.5 text-brand-black" />;
-    return <AlertTriangle className="w-3.5 h-3.5 text-brand-gray" />;
-  };
   return (
-    <div className="w-full h-full relative font-sans pr-10">
+    <div className="w-full h-full relative font-sans">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} layout="vertical" barSize={32} margin={{ left: 20, right: 20 }}>
+        <BarChart 
+          data={data} 
+          layout="vertical" 
+          barSize={32} 
+          margin={{ left: 20, right: 40 }}
+        >
           <defs>
             <pattern id={stripeId} patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
               <line x1="0" y1="0" x2="0" y2="8" stroke="#71717A" strokeWidth="2" />
@@ -98,17 +122,10 @@ export const MasteryHeatmap = ({ data }: { data: any[] }) => {
                 strokeWidth={1.5}
               />
             ))}
+            <LabelList dataKey="value" content={<CustomMasteryLabel />} />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-      {/* Icon layer for accessibility - adjusted for bar spacing */}
-      <div className="absolute top-0 right-0 h-full flex flex-col justify-around py-6 pointer-events-none">
-        {data.map((entry, idx) => (
-          <div key={idx} className="flex items-center pr-1 h-[32px]">
-            {getIcon(entry.value)}
-          </div>
-        ))}
-      </div>
     </div>
   );
 };

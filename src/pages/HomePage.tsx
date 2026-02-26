@@ -6,6 +6,7 @@ import { mockLessons } from '@/lib/mockData';
 import { chatService } from '@/lib/chat';
 import type { SessionInfo } from '../../worker/types';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 export function HomePage() {
   const navigate = useNavigate();
   const [sessions, setSessions] = useState<SessionInfo[]>([]);
@@ -32,7 +33,6 @@ export function HomePage() {
     try {
       chatService.newSession();
       const sessionId = chatService.getSessionId();
-      // Pre-create session in backend for persistence
       const res = await chatService.createSession(`New Lesson Draft`, sessionId);
       if (res.success) {
         navigate(`/editor/${sessionId}`);
@@ -46,6 +46,8 @@ export function HomePage() {
       setIsCreating(false);
     }
   };
+  // The very first session in the list (most recently active) gets the special badge
+  const mostRecentSessionId = sessions.length > 0 ? sessions[0].id : null;
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
@@ -87,7 +89,6 @@ export function HomePage() {
             )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {/* Real Sessions */}
             {isLoading ? (
               <div className="col-span-full flex flex-col items-center justify-center py-24 space-y-4">
                 <Loader2 className="w-10 h-10 animate-spin text-brand-primary" />
@@ -103,10 +104,16 @@ export function HomePage() {
                   <div className="border-2 border-brand-black p-8 bg-white shadow-sketch group-hover:shadow-sketch-lg group-hover:-translate-y-1 transition-all h-full flex flex-col relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-12 h-12 bg-brand-primary/5 -rotate-45 translate-x-6 -translate-y-6" />
                     <div className="flex justify-between items-start mb-6">
-                      <span className="text-[10px] font-black uppercase px-2 py-1 bg-brand-black text-white flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-brand-primary" />
-                        Recently Viewed
-                      </span>
+                      {session.id === mostRecentSessionId ? (
+                        <span className="text-[10px] font-black uppercase px-2 py-1 bg-brand-black text-white flex items-center gap-1">
+                          <Sparkles className="w-3 h-3 text-brand-primary" />
+                          Recently Viewed
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-black uppercase px-2 py-1 bg-muted text-brand-black border border-brand-black/10">
+                          Draft
+                        </span>
+                      )}
                       <span className="text-[10px] text-brand-gray font-bold uppercase font-sans">
                         {new Date(session.lastActive).toLocaleDateString()}
                       </span>
@@ -122,31 +129,34 @@ export function HomePage() {
                 </div>
               ))
             )}
-            {/* Mock Examples */}
+            {/* Mock Examples - Visual weight reduced if real sessions exist */}
             {mockLessons.map((lesson) => (
               <div
                 key={lesson.id}
                 onClick={() => navigate(`/editor/${lesson.id}`)}
-                className="group cursor-pointer opacity-70 hover:opacity-100 transition-opacity"
+                className={cn(
+                  "group cursor-pointer transition-all duration-300",
+                  sessions.length > 0 ? "opacity-40 hover:opacity-100" : "opacity-70 hover:opacity-100"
+                )}
               >
-                <div className="border-2 border-brand-black p-8 bg-white/50 shadow-sketch group-hover:shadow-sketch-lg group-hover:-translate-y-1 transition-all h-full flex flex-col grayscale hover:grayscale-0">
+                <div className="border-2 border-dashed border-brand-black/30 p-8 bg-white/50 shadow-none group-hover:shadow-sketch group-hover:border-solid group-hover:border-brand-black group-hover:-translate-y-1 transition-all h-full flex flex-col grayscale hover:grayscale-0">
                   <div className="flex justify-between items-start mb-6">
-                    <span className="text-[10px] font-black uppercase px-2 py-1 bg-brand-primary text-white">
+                    <span className="text-[10px] font-black uppercase px-2 py-1 bg-brand-primary/20 text-brand-primary border border-brand-primary/30">
                       {lesson.subject}
                     </span>
                     <span className="text-[10px] text-brand-gray font-bold uppercase font-sans">{lesson.date}</span>
                   </div>
-                  <h4 className="text-2xl font-black leading-none mb-3 uppercase tracking-tighter text-brand-black font-display">{lesson.title}</h4>
-                  <p className="text-brand-gray text-sm line-clamp-2 mb-6 font-medium leading-relaxed font-sans">{lesson.description}</p>
+                  <h4 className="text-2xl font-black leading-none mb-3 uppercase tracking-tighter text-brand-black/60 group-hover:text-brand-black font-display">{lesson.title}</h4>
+                  <p className="text-brand-gray/60 group-hover:text-brand-gray text-sm line-clamp-2 mb-6 font-medium leading-relaxed font-sans">{lesson.description}</p>
                   <div className="mt-auto flex items-center justify-between border-t border-brand-black/10 pt-6">
                     <div className="flex gap-1">
                       {lesson.tags.slice(0, 2).map(tag => (
-                        <span key={tag} className="text-[9px] font-black uppercase text-brand-black border border-brand-black px-1.5 py-0.5">
+                        <span key={tag} className="text-[9px] font-black uppercase text-brand-black/40 group-hover:text-brand-black border border-brand-black/20 group-hover:border-brand-black px-1.5 py-0.5">
                           {tag}
                         </span>
                       ))}
                     </div>
-                    <ArrowRight className="w-4 h-4 text-brand-primary group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 text-brand-primary/40 group-hover:text-brand-primary group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </div>
