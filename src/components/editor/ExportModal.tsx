@@ -72,9 +72,9 @@ export function ExportModal({ isOpen, onClose, lessonTitle }: ExportModalProps) 
   ];
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] border-3 border-ink shadow-sketch-lg bg-paper max-h-[90vh] overflow-y-auto" aria-describedby="export-description">
+      <DialogContent className="sm:max-w-[600px] border-3 border-ink shadow-sketch-lg bg-paper max-h-[90vh] overflow-y-auto" aria-labelledby="export-dialog-title" aria-describedby="export-description">
         <DialogHeader>
-          <DialogTitle className="font-display text-4xl text-center">LTI 1.3 Advantage Bridge</DialogTitle>
+          <DialogTitle id="export-dialog-title" className="font-display text-4xl text-center">LTI 1.3 Advantage Bridge</DialogTitle>
           <DialogDescription id="export-description" className="text-center italic text-lg text-muted-foreground">
             Packaging "{lessonTitle}" for production-grade LMS deployment.
           </DialogDescription>
