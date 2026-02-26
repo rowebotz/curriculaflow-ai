@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Target, BookOpen, AlertCircle, HelpCircle, GraduationCap } from 'lucide-react';
+import { Layers, Target, BookOpen, AlertCircle, HelpCircle, GraduationCap, CheckSquare } from 'lucide-react';
 import { SketchCard } from '@/components/ui/sketch-card';
 import { RigorAdjuster } from './RigorAdjuster';
 import { LearningScienceConfig } from './LearningScienceConfig';
@@ -41,21 +41,21 @@ export function PreviewPanel({ data, onUpdate }: PreviewProps) {
       </div>
       <div className="grid md:grid-cols-5 gap-6 mb-12">
         <div className="md:col-span-3">
-          <RigorAdjuster 
-            currentLevel={data.rigorLevel || 'Standard'} 
-            onLevelChange={handleRigorChange} 
+          <RigorAdjuster
+            currentLevel={data.rigorLevel || 'Standard'}
+            onLevelChange={handleRigorChange}
           />
         </div>
         <div className="md:col-span-2">
-          <LearningScienceConfig 
-            layers={data.pedagogicalLayers || {}} 
-            onUpdate={handleLayerUpdate} 
+          <LearningScienceConfig
+            layers={data.pedagogicalLayers || {}}
+            onUpdate={handleLayerUpdate}
           />
         </div>
       </div>
       <div className="space-y-12">
         {data.modules?.map((mod: any, idx: number) => (
-          <div key={mod.id} className="relative">
+          <div key={mod.id || idx} className="relative">
             <div className="absolute -left-6 top-0 w-8 h-8 rounded-full bg-ink text-white flex items-center justify-center font-bold z-10 shadow-sketch">
               {idx + 1}
             </div>
