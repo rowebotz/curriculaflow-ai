@@ -13,6 +13,7 @@ import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
 import '@/index.css'
 import { HomePage } from '@/pages/HomePage'
 import { EditorPage } from '@/pages/EditorPage'
+import { AnalyticsPage } from '@/pages/AnalyticsPage'
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
@@ -28,6 +29,11 @@ const router = createBrowserRouter([
   {
     path: "/editor/:sessionId",
     element: <EditorPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/analytics",
+    element: <AnalyticsPage />,
     errorElement: <RouteErrorBoundary />,
   }
 ]);

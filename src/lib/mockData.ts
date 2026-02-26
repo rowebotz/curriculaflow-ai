@@ -53,6 +53,26 @@ export const mockLessons = [
     blueprint: null
   }
 ];
+export const mockAnalyticsData = {
+  engagement: [
+    { name: 'Mon', value: 65 },
+    { name: 'Tue', value: 82 },
+    { name: 'Wed', value: 74 },
+    { name: 'Thu', value: 91 },
+    { name: 'Fri', value: 88 },
+  ],
+  mastery: [
+    { name: 'HS-LS2-4', value: 92 },
+    { name: 'HS-LS2-7', value: 58 },
+    { name: 'CCSS.ELA.1', value: 85 },
+    { name: 'NGSS.PS.2', value: 77 },
+  ],
+  suggestions: [
+    "Increase scaffolding for HS-LS2-7 standard.",
+    "Introduce more visual modeling for the Nitrogen cycle.",
+    "Differentiate Module 2 for Group C learners."
+  ]
+};
 export const educationalStandards = [
   { id: 'HS-LS2-4', description: 'Use mathematical representations to support claims for the cycling of matter.' },
   { id: 'CCSS.ELA-LITERACY.RL.11-12.3', description: 'Analyze the impact of the author’s choices regarding how to develop and relate elements of a story.' }

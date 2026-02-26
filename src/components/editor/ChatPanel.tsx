@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Loader2 } from 'lucide-react';
 import { chatService } from '@/lib/chat';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -13,42 +13,52 @@ export function ChatPanel({ onBlueprintUpdate }: { onBlueprintUpdate: (data: any
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollAnchorRef = useRef<HTMLDivElement>(null);
+  const scrollToBottom = () => {
+    scrollAnchorRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || isTyping) return;
     const userMsg = { role: 'user' as const, content: input };
     setMessages(prev => [...prev, userMsg]);
+    const currentInput = input;
     setInput('');
     setIsTyping(true);
+    let fullAssistantContent = '';
     try {
-      // Simulate/Trigger AI response via chatService
-      const response = await chatService.sendMessage(input);
-      // In a real scenario, the agent returns structured blocks
-      // For Phase 1, we simulate parsing a response that might contain lesson updates
-      const assistantMsg = { 
-        role: 'assistant' as const, 
-        content: "I've analyzed your input. I suggest structuring this into 3 modules with focus on inquiry-based learning. I've updated the blueprint with some initial objectives." 
-      };
-      setMessages(prev => [...prev, assistantMsg]);
-      // Dummy update to preview
-      onBlueprintUpdate({
-        title: input.slice(0, 30),
-        modules: [
-          { id: '1', title: 'Introduction to ' + input, objectives: ['Identify core concepts'], standards: ['CCSS.ELA-LITERACY.RI.9-10.1'] },
-          { id: '2', title: 'Active Exploration', objectives: ['Perform guided experiment'], standards: ['HS-LS1-5'] }
-        ]
+      await chatService.sendMessage(currentInput, undefined, (chunk) => {
+        fullAssistantContent += chunk;
+        setMessages(prev => {
+          const lastMsg = prev[prev.length - 1];
+          if (lastMsg && lastMsg.role === 'assistant') {
+            const newHistory = [...prev];
+            newHistory[newHistory.length - 1] = { ...lastMsg, content: fullAssistantContent };
+            return newHistory;
+          } else {
+            return [...prev, { role: 'assistant', content: fullAssistantContent }];
+          }
+        });
       });
+      // After streaming finishes, check for JSON blocks
+      const jsonMatch = fullAssistantContent.match(/```json\s*([\s\S]*?)\s*```/);
+      if (jsonMatch && jsonMatch[1]) {
+        try {
+          const parsedData = JSON.parse(jsonMatch[1]);
+          if (parsedData) onBlueprintUpdate(parsedData);
+        } catch (e) {
+          console.warn("Failed to parse AI JSON block:", e);
+        }
+      }
     } catch (e) {
       console.error(e);
+      setMessages(prev => [...prev, { role: 'assistant', content: "I'm sorry, I hit a snag while processing that request. Could you try again?" }]);
     } finally {
       setIsTyping(false);
     }
   };
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
   return (
     <div className="flex flex-col h-full bg-white relative">
       <div className="bg-ink text-white px-4 py-2 flex items-center justify-between text-sm font-bold">
@@ -58,37 +68,47 @@ export function ChatPanel({ onBlueprintUpdate }: { onBlueprintUpdate: (data: any
         </div>
         <Sparkles className="w-4 h-4 text-highlighter" />
       </div>
-      <ScrollArea className="flex-1 p-4" viewportRef={scrollRef}>
-        <div className="space-y-6">
+      <ScrollArea className="flex-1 p-4">
+        <div className="space-y-6 pb-4">
           {messages.map((m, i) => (
             <div key={i} className={cn("flex flex-col", m.role === 'user' ? "items-end" : "items-start")}>
               <div className={cn(
-                "max-w-[85%] p-4 border-2 border-ink shadow-sketch transition-all",
+                "max-w-[90%] p-4 border-2 border-ink shadow-sketch transition-all",
                 m.role === 'user' ? "bg-muted rotate-1" : "bg-white -rotate-1"
               )}>
                 <div className="flex items-center gap-2 mb-2 text-xs font-bold uppercase text-muted-foreground">
                   {m.role === 'user' ? <User className="w-3 h-3" /> : <Bot className="w-3 h-3" />}
-                  <span>{m.role === 'user' ? 'Educator' : 'Bot'}</span>
+                  <span>{m.role === 'user' ? 'Educator' : 'CurriculaBot'}</span>
                 </div>
-                <p className="text-lg leading-relaxed">{m.content}</p>
+                <div className="text-lg leading-relaxed whitespace-pre-wrap">
+                  {/* Strip out the raw JSON block for display if desired, but here we show full for transparency */}
+                  {m.content.replace(/```json\s*[\s\S]*?\s*```/g, ' [Blueprint Updated] ')}
+                </div>
               </div>
             </div>
           ))}
-          {isTyping && <div className="italic text-muted-foreground text-sm p-2">Bot is sketching ideas...</div>}
+          {isTyping && (
+            <div className="flex items-center gap-2 p-4 border-2 border-dashed border-ink/20 animate-pulse bg-highlighter/5">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="font-bold italic text-sm">Sketching pedagogical structures...</span>
+            </div>
+          )}
+          <div ref={scrollAnchorRef} />
         </div>
       </ScrollArea>
-      <div className="p-4 border-t-3 border-ink">
+      <div className="p-4 border-t-3 border-ink bg-paper/50">
         <div className="relative">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
-            placeholder="Type your lesson notes..."
-            className="w-full input-sketch min-h-[100px] resize-none pr-12"
+            placeholder="Suggest a module on..."
+            className="w-full input-sketch min-h-[80px] max-h-[200px] resize-none pr-12"
           />
-          <button 
+          <button
             onClick={handleSend}
-            className="absolute bottom-4 right-2 p-2 bg-highlighter border-2 border-ink shadow-sketch hover:shadow-sketch-hover active:translate-y-0.5"
+            disabled={isTyping || !input.trim()}
+            className="absolute bottom-4 right-2 p-2 bg-highlighter border-2 border-ink shadow-sketch hover:shadow-sketch-hover active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send className="w-5 h-5" />
           </button>
