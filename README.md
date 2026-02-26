@@ -1,6 +1,6 @@
 # Cloudflare AI Chat Agent Template
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/rowebotz/curriculaflow-ai)
 
 A production-ready, full-stack AI chat application built on Cloudflare Workers. Features persistent chat sessions powered by Durable Objects, real-time streaming responses, built-in tools (weather, web search), multi-model support (Gemini), and a modern React frontend with shadcn/ui.
 
@@ -107,7 +107,7 @@ A production-ready, full-stack AI chat application built on Cloudflare Workers. 
    wrangler secret put SERPAPI_KEY
    ```
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/rowebotz/curriculaflow-ai)
 
 **SPA Routing**: Assets served via Workers; API routes (`/api/*`) handled first.
 
