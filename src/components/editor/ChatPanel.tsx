@@ -9,14 +9,15 @@ interface Message {
 }
 interface ChatPanelProps {
   onBlueprintUpdate: (data: any) => void;
+  onRestored?: () => void;
   autoAlignTrigger?: number;
   sessionId?: string;
 }
-const INITIAL_MESSAGE: Message = { 
-  role: 'assistant', 
-  content: "Instructional Engine initialized. Provide your learning objectives or content snippets to generate a standards-aligned lesson blueprint." 
+const INITIAL_MESSAGE: Message = {
+  role: 'assistant',
+  content: "Instructional Engine initialized. Provide your learning objectives or content snippets to generate a standards-aligned lesson blueprint."
 };
-export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }: ChatPanelProps) {
+export function ChatPanel({ onBlueprintUpdate, onRestored, autoAlignTrigger = 0, sessionId }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -86,7 +87,6 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
   }, [input, isTyping, isRestoring, extractAndUpdateBlueprint]);
   useEffect(() => {
     if (!sessionId) return;
-    // 1) Clear local state immediately to prevent data leakage between sessions
     setMessages([INITIAL_MESSAGE]);
     chatService.switchSession(sessionId);
     const restoreHistory = async () => {
@@ -100,11 +100,8 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
             .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));
           if (history.length > 0) {
             setMessages(history);
-            // 4) Find the most recent valid JSON block found in history during restoration
-            let foundLatest = false;
             for (let i = history.length - 1; i >= 0; i--) {
               if (extractAndUpdateBlueprint(history[i].content)) {
-                foundLatest = true;
                 break;
               }
             }
@@ -113,11 +110,14 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
       } catch (e) {
         console.error("Failed to restore history", e);
       } finally {
-        if (isMounted.current) setIsRestoring(false);
+        if (isMounted.current) {
+          setIsRestoring(false);
+          if (onRestored) onRestored();
+        }
       }
     };
     restoreHistory();
-  }, [sessionId, extractAndUpdateBlueprint]);
+  }, [sessionId, extractAndUpdateBlueprint, onRestored]);
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping, scrollToBottom]);

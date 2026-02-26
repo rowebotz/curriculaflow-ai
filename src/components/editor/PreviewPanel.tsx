@@ -82,7 +82,7 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
                   </TooltipTrigger>
                   <TooltipContent className="bg-brand-black text-white p-4 w-72 rounded-none border-none shadow-sketch-lg">
                     <p className="font-bold mb-2 uppercase tracking-widest text-brand-primary text-[10px]">Trust Center Logic</p>
-                    <p className="text-[11px] leading-relaxed mb-3 font-sans">Aligns module objectives with state standards using RAG (Retrieval-Augmented Generation) against the CurriculaFlow database.</p>
+                    <p className="text-[11px] leading-relaxed mb-3 font-sans">Aligns module objectives with state standards using RAG against the CurriculaFlow database.</p>
                     <a href="#" className="text-[10px] underline hover:text-brand-primary uppercase font-black font-sans focus:outline-none">Transparency Center</a>
                   </TooltipContent>
                 </Tooltip>
@@ -142,7 +142,7 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
                             </button>
                           </TooltipTrigger>
                           <TooltipContent className="bg-brand-black text-white p-3 text-[10px] font-bold uppercase rounded-none max-w-[200px] border-none">
-                            Backward Design: "{mod.title || 'This module'}" was architected to ensure alignment with standard {mod.standards?.[0] || 'compliance'}.
+                            Backward Design: Module was architected to ensure alignment with standard {mod.standards?.[0] || 'compliance'}.
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>

@@ -89,9 +89,9 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
                 <Lock className="w-3 h-3" />
                 <span>Secure Professional Workspace</span>
               </div>
-              <div className="cursor-pointer hover:text-brand-primary transition-colors">
+              <Link to="/why-hire" className="hover:text-brand-primary transition-colors cursor-pointer">
                 Stephen Rowe's Job Application Tool
-              </div>
+              </Link>
             </footer>
           </main>
         </div>

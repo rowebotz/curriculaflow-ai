@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { mockLessons } from '@/lib/mockData';
 import { chatService } from '@/lib/chat';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 export function EditorPage() {
   const { sessionId } = useParams();
   const isMobile = useIsMobile();
@@ -20,22 +20,19 @@ export function EditorPage() {
   useEffect(() => {
     if (sessionId) {
       chatService.switchSession(sessionId);
-      // Initially, we check mock data as a fallback. 
-      // The ChatPanel will overwrite this once it finishes restoring history.
       const foundMock = mockLessons.find(l => l.id === sessionId);
       if (foundMock) {
         setLessonData(foundMock.blueprint);
         setIsInitializing(false);
       } else {
-        // If not a mock session, we wait for the ChatPanel to extract from history
-        // We set a small timeout to let ChatPanel take over
-        const timer = setTimeout(() => setIsInitializing(false), 2000);
-        return () => clearTimeout(timer);
+        setIsInitializing(true);
       }
     }
   }, [sessionId]);
   const handleDataUpdate = useCallback((newData: any) => {
     setLessonData(newData);
+  }, []);
+  const handleRestored = useCallback(() => {
     setIsInitializing(false);
   }, []);
   const handleRefine = () => {
@@ -47,14 +44,15 @@ export function EditorPage() {
         <ChatPanel
           sessionId={sessionId}
           onBlueprintUpdate={handleDataUpdate}
+          onRestored={handleRestored}
           autoAlignTrigger={autoAlignTrigger}
         />
       </ResizablePanel>
       <ResizableHandle withHandle className="bg-ink w-1" />
       <ResizablePanel defaultSize={60}>
-        <PreviewPanel 
-          data={lessonData} 
-          onUpdate={handleDataUpdate} 
+        <PreviewPanel
+          data={lessonData}
+          onUpdate={handleDataUpdate}
           isLoading={isInitializing}
         />
       </ResizablePanel>
@@ -70,13 +68,14 @@ export function EditorPage() {
         <ChatPanel
           sessionId={sessionId}
           onBlueprintUpdate={handleDataUpdate}
+          onRestored={handleRestored}
           autoAlignTrigger={autoAlignTrigger}
         />
       </TabsContent>
       <TabsContent value="preview" className="h-[calc(100vh-280px)] overflow-y-auto">
-        <PreviewPanel 
-          data={lessonData} 
-          onUpdate={handleDataUpdate} 
+        <PreviewPanel
+          data={lessonData}
+          onUpdate={handleDataUpdate}
           isLoading={isInitializing}
         />
       </TabsContent>
