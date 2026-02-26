@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Bot, User, Sparkles, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Loader2, RefreshCw } from 'lucide-react';
 import { chatService } from '@/lib/chat';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -18,6 +18,7 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = useCallback((instant = false) => {
     if (scrollAnchorRef.current) {
@@ -27,9 +28,26 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
       });
     }
   }, []);
+  const extractAndUpdateBlueprint = useCallback((content: string) => {
+    // Improved regex to handle various markdown styles and whitespace
+    const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (jsonMatch && jsonMatch[1]) {
+      try {
+        const cleanedJson = jsonMatch[1].trim();
+        const parsedData = JSON.parse(cleanedJson);
+        if (parsedData && typeof parsedData === 'object') {
+          onBlueprintUpdate(parsedData);
+          return true;
+        }
+      } catch (e) {
+        console.warn("Blueprint extraction failed:", e);
+      }
+    }
+    return false;
+  }, [onBlueprintUpdate]);
   const handleSend = useCallback(async (forcedInput?: string) => {
-    const messageContent = forcedInput || input;
-    if (!messageContent.trim() || isTyping) return;
+    const messageContent = (forcedInput || input).trim();
+    if (!messageContent || isTyping) return;
     const userMsg = { role: 'user' as const, content: messageContent };
     setMessages(prev => [...prev, userMsg]);
     if (!forcedInput) setInput('');
@@ -49,26 +67,19 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
           }
         });
       });
-      const jsonMatch = fullAssistantContent.match(/```json\s*([\s\S]*?)\s*```/);
-      if (jsonMatch && jsonMatch[1]) {
-        try {
-          const parsedData = JSON.parse(jsonMatch[1]);
-          if (parsedData) onBlueprintUpdate(parsedData);
-        } catch (e) {
-          console.warn("Blueprint extraction failed:", e);
-        }
-      }
+      extractAndUpdateBlueprint(fullAssistantContent);
     } catch (e) {
       console.error(e);
       setMessages(prev => [...prev, { role: 'assistant', content: "Connection interrupted. Please resubmit the instructional request." }]);
     } finally {
       setIsTyping(false);
     }
-  }, [input, isTyping, onBlueprintUpdate]);
+  }, [input, isTyping, extractAndUpdateBlueprint]);
   useEffect(() => {
     if (!sessionId) return;
     chatService.switchSession(sessionId);
     const restoreHistory = async () => {
+      setIsRestoring(true);
       try {
         const response = await chatService.getMessages();
         if (response.success && response.data?.messages) {
@@ -77,24 +88,22 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
             .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));
           if (history.length > 0) {
             setMessages(history);
+            // Find the latest valid blueprint in history
             for (let i = history.length - 1; i >= 0; i--) {
-              const jsonMatch = history[i].content.match(/```json\s*([\s\S]*?)\s*```/);
-              if (jsonMatch && jsonMatch[1]) {
-                try {
-                  const parsed = JSON.parse(jsonMatch[1]);
-                  onBlueprintUpdate(parsed);
-                  break;
-                } catch (e) { /* continue */ }
+              if (extractAndUpdateBlueprint(history[i].content)) {
+                break;
               }
             }
           }
         }
       } catch (e) {
         console.error("Failed to restore history", e);
+      } finally {
+        setIsRestoring(false);
       }
     };
     restoreHistory();
-  }, [sessionId, onBlueprintUpdate]);
+  }, [sessionId, extractAndUpdateBlueprint]);
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping, scrollToBottom]);
@@ -110,7 +119,14 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
           <Bot className="w-4 h-4 text-brand-primary" />
           <span>CurriculaFlow Engine</span>
         </div>
-        <Sparkles className="w-4 h-4 text-brand-primary" />
+        {isRestoring ? (
+          <div className="flex items-center gap-2 text-brand-primary animate-pulse">
+            <RefreshCw className="w-3 h-3 animate-spin" />
+            <span>Restoring Progress...</span>
+          </div>
+        ) : (
+          <Sparkles className="w-4 h-4 text-brand-primary" />
+        )}
       </div>
       <ScrollArea className="flex-1 p-6">
         <div className="space-y-8 pb-4">
@@ -125,7 +141,7 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
                   <span>{m.role === 'user' ? 'Educator' : 'Assistant'}</span>
                 </div>
                 <div className="text-base leading-relaxed whitespace-pre-wrap text-brand-black">
-                  {m.content.split(/```json\s*[\s\S]*?\s*```/g).map((part, idx, arr) => (
+                  {m.content.split(/```(?:json)?\s*[\s\S]*?\s*```/g).map((part, idx, arr) => (
                     <React.Fragment key={idx}>
                       {part}
                       {idx < arr.length - 1 && (

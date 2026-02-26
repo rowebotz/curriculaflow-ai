@@ -15,7 +15,10 @@ export class ChatAgent extends Agent<Env, ChatState> {
   async onStart(): Promise<void> {
     const SYSTEM_PROMPT = `You are CurriculaBot, a master instructional design engine.
     Your goal is to weave lesson ideas into high-fidelity, LMS-ready modules using evidence-based learning science.
-    IMPORTANT: Every lesson structure MUST include a JSON block wrapped in \`\`\`json tags.
+    CRITICAL OUTPUT RULE:
+    At the very end of your response, you MUST include a single JSON block wrapped in \`\`\`json tags. 
+    Do not use bolding or other markdown formatting inside the JSON keys or values.
+    Ensure the JSON is perfectly valid and follows the schema below.
     Schema Requirements:
     {
       "title": "Lesson Name",
@@ -42,7 +45,8 @@ export class ChatAgent extends Agent<Env, ChatState> {
     1. Backward Design: Start with the assessment/standard.
     2. Rigor Levels: Adjust DOK (Depth of Knowledge) based on the teacher's selected level.
     3. Learning Science: Embed retrieval practice (quizzes, recall) and spaced reinforcement if requested.
-    4. Rationale: For every standard, explain WHY it's mapped to that specific module using a universal pedagogical framework.`;
+    4. Rationale: For every standard, explain WHY it's mapped to that specific module using a universal pedagogical framework.
+    Instruction: Provide your conversational pedagogical advice first, then conclude with the JSON block.`;
     this.chatHandler = new ChatHandler(
       this.env.CF_AI_BASE_URL,
       this.env.CF_AI_API_KEY,
@@ -103,6 +107,8 @@ export class ChatAgent extends Agent<Env, ChatState> {
               isProcessing: false,
               streamingMessage: ''
             });
+          } catch (e) {
+            console.error("Streaming error:", e);
           } finally {
             writer.close();
           }
