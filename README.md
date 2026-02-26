@@ -73,8 +73,7 @@ The system is designed for extensibility, allowing new instructional tools, anal
 
 ---
 
-Built by Stephen Rowe
-Instructional systems + AI-powered curriculum engineering
+Built by Stephen Rowe, Instructional systems + AI-powered curriculum engineering
 
 ### Installation
 
