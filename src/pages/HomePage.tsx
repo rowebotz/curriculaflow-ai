@@ -1,11 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { SketchCard } from '@/components/ui/sketch-card';
-import { Plus, Clock, Tag, ArrowRight } from 'lucide-react';
+import { Plus, Clock, ArrowRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { mockLessons } from '@/lib/mockData';
+import { chatService } from '@/lib/chat';
+import type { SessionInfo } from '../../worker/types';
 export function HomePage() {
   const navigate = useNavigate();
+  const [sessions, setSessions] = useState<SessionInfo[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const response = await chatService.listSessions();
+        if (response.success && response.data) {
+          setSessions(response.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch sessions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSessions();
+  }, []);
+  const handleCreateNew = async () => {
+    chatService.newSession();
+    const sessionId = chatService.getSessionId();
+    // Pre-create session in backend for persistence
+    await chatService.createSession(`New Lesson Draft`, sessionId);
+    navigate(`/editor/${sessionId}`);
+  };
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
@@ -22,7 +47,7 @@ export function HomePage() {
             </p>
           </div>
           <button
-            onClick={() => navigate('/editor')}
+            onClick={handleCreateNew}
             className="btn-sketch text-sm px-10 py-4 h-auto"
           >
             <Plus className="mr-2 h-5 w-5 stroke-[3]" />
@@ -35,18 +60,48 @@ export function HomePage() {
               <Clock className="w-5 h-5 text-brand-primary" />
               <h3 className="font-black text-xs uppercase tracking-[0.2em] text-brand-black">Active Drafts</h3>
             </div>
-            <div className="text-[10px] font-bold text-brand-gray uppercase tracking-widest">
-              Last Updated: Today
-            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {/* Real Sessions */}
+            {isLoading ? (
+              <div className="col-span-full flex justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
+              </div>
+            ) : (
+              sessions.map((session) => (
+                <div
+                  key={session.id}
+                  onClick={() => navigate(`/editor/${session.id}`)}
+                  className="group cursor-pointer"
+                >
+                  <div className="border-2 border-brand-black p-8 bg-white shadow-sketch group-hover:shadow-sketch-lg group-hover:-translate-y-1 transition-all h-full flex flex-col">
+                    <div className="flex justify-between items-start mb-6">
+                      <span className="text-[10px] font-black uppercase px-2 py-1 bg-brand-black text-white">
+                        User Draft
+                      </span>
+                      <span className="text-[10px] text-brand-gray font-bold uppercase">
+                        {new Date(session.lastActive).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <h4 className="text-2xl font-black leading-none mb-3 uppercase tracking-tighter text-brand-black line-clamp-2">
+                      {session.title}
+                    </h4>
+                    <div className="mt-auto pt-6 flex items-center justify-between border-t border-brand-black/10">
+                      <span className="text-[9px] font-black uppercase text-brand-primary">Resume Weaving</span>
+                      <ArrowRight className="w-4 h-4 text-brand-primary group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+            {/* Mock Examples */}
             {mockLessons.map((lesson) => (
               <div
                 key={lesson.id}
                 onClick={() => navigate(`/editor/${lesson.id}`)}
                 className="group cursor-pointer"
               >
-                <div className="border-2 border-brand-black p-8 bg-white shadow-sketch group-hover:shadow-sketch-lg group-hover:-translate-y-1 transition-all">
+                <div className="border-2 border-brand-black p-8 bg-white shadow-sketch group-hover:shadow-sketch-lg group-hover:-translate-y-1 transition-all h-full flex flex-col">
                   <div className="flex justify-between items-start mb-6">
                     <span className="text-[10px] font-black uppercase px-2 py-1 bg-brand-primary text-white">
                       {lesson.subject}
@@ -55,7 +110,7 @@ export function HomePage() {
                   </div>
                   <h4 className="text-2xl font-black leading-none mb-3 uppercase tracking-tighter text-brand-black">{lesson.title}</h4>
                   <p className="text-brand-gray text-sm line-clamp-2 mb-6 font-medium leading-relaxed">{lesson.description}</p>
-                  <div className="flex items-center justify-between border-t border-brand-black/10 pt-6">
+                  <div className="mt-auto flex items-center justify-between border-t border-brand-black/10 pt-6">
                     <div className="flex gap-1">
                       {lesson.tags.slice(0, 2).map(tag => (
                         <span key={tag} className="text-[9px] font-black uppercase text-brand-black border border-brand-black px-1.5 py-0.5">
@@ -69,8 +124,8 @@ export function HomePage() {
               </div>
             ))}
             <button
-              onClick={() => navigate('/editor')}
-              className="border-2 border-dashed border-brand-black/20 flex flex-col items-center justify-center p-12 hover:border-brand-primary hover:bg-brand-primary/5 transition-colors group"
+              onClick={handleCreateNew}
+              className="border-2 border-dashed border-brand-black/20 flex flex-col items-center justify-center p-12 hover:border-brand-primary hover:bg-brand-primary/5 transition-colors group min-h-[200px]"
             >
                <Plus className="w-10 h-10 mb-4 text-brand-black/20 group-hover:text-brand-primary transition-colors" />
                <p className="font-black text-[10px] uppercase tracking-widest text-brand-black/40 group-hover:text-brand-primary">Initiate New Blueprint</p>

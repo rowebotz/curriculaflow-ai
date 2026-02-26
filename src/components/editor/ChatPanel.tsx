@@ -7,7 +7,11 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
-export function ChatPanel({ onBlueprintUpdate }: { onBlueprintUpdate: (data: any) => void }) {
+interface ChatPanelProps {
+  onBlueprintUpdate: (data: any) => void;
+  autoAlignTrigger?: number;
+}
+export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0 }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: "Instructional Engine initialized. Provide your learning objectives or content snippets to generate a standards-aligned lesson blueprint." }
   ]);
@@ -15,24 +19,62 @@ export function ChatPanel({ onBlueprintUpdate }: { onBlueprintUpdate: (data: any
   const [isTyping, setIsTyping] = useState(false);
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = (instant = false) => {
-    scrollAnchorRef.current?.scrollIntoView({
-      behavior: instant ? 'auto' : 'smooth',
-      block: 'end'
-    });
+    if (scrollAnchorRef.current) {
+      scrollAnchorRef.current.scrollIntoView({
+        behavior: instant ? 'auto' : 'smooth',
+        block: 'end'
+      });
+    }
   };
+  // Restore history on mount or session change
+  useEffect(() => {
+    const restoreHistory = async () => {
+      try {
+        const response = await chatService.getMessages();
+        if (response.success && response.data?.messages) {
+          const history = response.data.messages
+            .filter(m => m.role === 'user' || m.role === 'assistant')
+            .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));
+          if (history.length > 0) {
+            setMessages(history);
+            // Extract the latest blueprint from history
+            for (let i = history.length - 1; i >= 0; i--) {
+              const jsonMatch = history[i].content.match(/```json\s*([\s\S]*?)\s*```/);
+              if (jsonMatch && jsonMatch[1]) {
+                try {
+                  const parsed = JSON.parse(jsonMatch[1]);
+                  onBlueprintUpdate(parsed);
+                  break;
+                } catch (e) { /* continue */ }
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to restore history", e);
+      }
+    };
+    restoreHistory();
+  }, []);
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
-  const handleSend = async () => {
-    if (!input.trim() || isTyping) return;
-    const userMsg = { role: 'user' as const, content: input };
+  // Handle External Auto-Align Trigger
+  useEffect(() => {
+    if (autoAlignTrigger > 0) {
+      handleSend("Please review the current blueprint and ensure it fully aligns with the latest pedagogical standards and rigor levels. Adjust modules if necessary.");
+    }
+  }, [autoAlignTrigger]);
+  const handleSend = async (forcedInput?: string) => {
+    const messageContent = forcedInput || input;
+    if (!messageContent.trim() || isTyping) return;
+    const userMsg = { role: 'user' as const, content: messageContent };
     setMessages(prev => [...prev, userMsg]);
-    const currentInput = input;
-    setInput('');
+    if (!forcedInput) setInput('');
     setIsTyping(true);
     let fullAssistantContent = '';
     try {
-      await chatService.sendMessage(currentInput, undefined, (chunk) => {
+      await chatService.sendMessage(messageContent, undefined, (chunk) => {
         fullAssistantContent += chunk;
         setMessages(prev => {
           const lastMsg = prev[prev.length - 1];
@@ -116,7 +158,7 @@ export function ChatPanel({ onBlueprintUpdate }: { onBlueprintUpdate: (data: any
             className="w-full input-sketch min-h-[90px] max-h-[220px] resize-none pr-14 text-sm"
           />
           <button
-            onClick={handleSend}
+            onClick={() => handleSend()}
             disabled={isTyping || !input.trim()}
             className="absolute bottom-4 right-3 p-3 bg-brand-primary text-white border-2 border-brand-black shadow-sketch hover:shadow-sketch-hover active:translate-y-0.5 disabled:opacity-30 disabled:grayscale transition-all"
           >
