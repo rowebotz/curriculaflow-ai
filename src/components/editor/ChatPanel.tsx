@@ -12,14 +12,21 @@ interface ChatPanelProps {
   autoAlignTrigger?: number;
   sessionId?: string;
 }
+const INITIAL_MESSAGE: Message = { 
+  role: 'assistant', 
+  content: "Instructional Engine initialized. Provide your learning objectives or content snippets to generate a standards-aligned lesson blueprint." 
+};
 export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }: ChatPanelProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: "Instructional Engine initialized. Provide your learning objectives or content snippets to generate a standards-aligned lesson blueprint." }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
+  const isMounted = useRef(true);
+  useEffect(() => {
+    isMounted.current = true;
+    return () => { isMounted.current = false; };
+  }, []);
   const scrollToBottom = useCallback((instant = false) => {
     if (scrollAnchorRef.current) {
       scrollAnchorRef.current.scrollIntoView({
@@ -29,7 +36,6 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
     }
   }, []);
   const extractAndUpdateBlueprint = useCallback((content: string) => {
-    // Improved regex to handle various markdown styles and whitespace
     const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
     if (jsonMatch && jsonMatch[1]) {
       try {
@@ -47,7 +53,7 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
   }, [onBlueprintUpdate]);
   const handleSend = useCallback(async (forcedInput?: string) => {
     const messageContent = (forcedInput || input).trim();
-    if (!messageContent || isTyping) return;
+    if (!messageContent || isTyping || isRestoring) return;
     const userMsg = { role: 'user' as const, content: messageContent };
     setMessages(prev => [...prev, userMsg]);
     if (!forcedInput) setInput('');
@@ -55,6 +61,7 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
     let fullAssistantContent = '';
     try {
       await chatService.sendMessage(messageContent, undefined, (chunk) => {
+        if (!isMounted.current) return;
         fullAssistantContent += chunk;
         setMessages(prev => {
           const lastMsg = prev[prev.length - 1];
@@ -70,27 +77,34 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
       extractAndUpdateBlueprint(fullAssistantContent);
     } catch (e) {
       console.error(e);
-      setMessages(prev => [...prev, { role: 'assistant', content: "Connection interrupted. Please resubmit the instructional request." }]);
+      if (isMounted.current) {
+        setMessages(prev => [...prev, { role: 'assistant', content: "Connection interrupted. Please resubmit the instructional request." }]);
+      }
     } finally {
-      setIsTyping(false);
+      if (isMounted.current) setIsTyping(false);
     }
-  }, [input, isTyping, extractAndUpdateBlueprint]);
+  }, [input, isTyping, isRestoring, extractAndUpdateBlueprint]);
   useEffect(() => {
     if (!sessionId) return;
+    // 1) Clear local state immediately to prevent data leakage between sessions
+    setMessages([INITIAL_MESSAGE]);
     chatService.switchSession(sessionId);
     const restoreHistory = async () => {
       setIsRestoring(true);
       try {
         const response = await chatService.getMessages();
+        if (!isMounted.current) return;
         if (response.success && response.data?.messages) {
           const history = response.data.messages
             .filter(m => m.role === 'user' || m.role === 'assistant')
             .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));
           if (history.length > 0) {
             setMessages(history);
-            // Find the latest valid blueprint in history
+            // 4) Find the most recent valid JSON block found in history during restoration
+            let foundLatest = false;
             for (let i = history.length - 1; i >= 0; i--) {
               if (extractAndUpdateBlueprint(history[i].content)) {
+                foundLatest = true;
                 break;
               }
             }
@@ -99,7 +113,7 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
       } catch (e) {
         console.error("Failed to restore history", e);
       } finally {
-        setIsRestoring(false);
+        if (isMounted.current) setIsRestoring(false);
       }
     };
     restoreHistory();
@@ -108,10 +122,10 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
     scrollToBottom();
   }, [messages, isTyping, scrollToBottom]);
   useEffect(() => {
-    if (autoAlignTrigger > 0) {
+    if (autoAlignTrigger > 0 && !isRestoring && !isTyping) {
       handleSend("Please review the current blueprint and ensure it fully aligns with the latest pedagogical standards and rigor levels. Adjust modules if necessary.");
     }
-  }, [autoAlignTrigger, handleSend]);
+  }, [autoAlignTrigger, handleSend, isRestoring, isTyping]);
   return (
     <div className="flex flex-col h-full bg-white relative border-r-2 border-brand-black/5 font-sans">
       <div className="bg-brand-black text-white px-4 py-3 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em]">
@@ -171,11 +185,12 @@ export function ChatPanel({ onBlueprintUpdate, autoAlignTrigger = 0, sessionId }
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
             placeholder="Describe lesson objectives or paste content..."
-            className="w-full input-sketch min-h-[90px] max-h-[220px] resize-none pr-14 text-sm font-sans"
+            disabled={isRestoring || isTyping}
+            className="w-full input-sketch min-h-[90px] max-h-[220px] resize-none pr-14 text-sm font-sans disabled:opacity-50"
           />
           <button
             onClick={() => handleSend()}
-            disabled={isTyping || !input.trim()}
+            disabled={isTyping || isRestoring || !input.trim()}
             className="absolute bottom-4 right-3 p-3 bg-brand-primary text-white border-2 border-brand-black shadow-sketch hover:shadow-sketch-hover active:translate-y-0.5 disabled:opacity-30 disabled:grayscale transition-all"
           >
             <Send className="w-5 h-5" />

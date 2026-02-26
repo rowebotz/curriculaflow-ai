@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ChatPanel } from '@/components/editor/ChatPanel';
@@ -9,25 +9,35 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { mockLessons } from '@/lib/mockData';
 import { chatService } from '@/lib/chat';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Loader2 } from 'lucide-react';
 export function EditorPage() {
   const { sessionId } = useParams();
   const isMobile = useIsMobile();
   const [lessonData, setLessonData] = useState<any>(null);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [autoAlignTrigger, setAutoAlignTrigger] = useState(0);
+  const [isInitializing, setIsInitializing] = useState(!!sessionId);
   useEffect(() => {
     if (sessionId) {
       chatService.switchSession(sessionId);
-      const found = mockLessons.find(l => l.id === sessionId);
-      if (found) {
-        setLessonData(found.blueprint);
+      // Initially, we check mock data as a fallback. 
+      // The ChatPanel will overwrite this once it finishes restoring history.
+      const foundMock = mockLessons.find(l => l.id === sessionId);
+      if (foundMock) {
+        setLessonData(foundMock.blueprint);
+        setIsInitializing(false);
+      } else {
+        // If not a mock session, we wait for the ChatPanel to extract from history
+        // We set a small timeout to let ChatPanel take over
+        const timer = setTimeout(() => setIsInitializing(false), 2000);
+        return () => clearTimeout(timer);
       }
     }
   }, [sessionId]);
-  const handleDataUpdate = (newData: any) => {
+  const handleDataUpdate = useCallback((newData: any) => {
     setLessonData(newData);
-  };
+    setIsInitializing(false);
+  }, []);
   const handleRefine = () => {
     setAutoAlignTrigger(prev => prev + 1);
   };
@@ -42,7 +52,11 @@ export function EditorPage() {
       </ResizablePanel>
       <ResizableHandle withHandle className="bg-ink w-1" />
       <ResizablePanel defaultSize={60}>
-        <PreviewPanel data={lessonData} onUpdate={handleDataUpdate} />
+        <PreviewPanel 
+          data={lessonData} 
+          onUpdate={handleDataUpdate} 
+          isLoading={isInitializing}
+        />
       </ResizablePanel>
     </ResizablePanelGroup>
   );
@@ -60,7 +74,11 @@ export function EditorPage() {
         />
       </TabsContent>
       <TabsContent value="preview" className="h-[calc(100vh-280px)] overflow-y-auto">
-        <PreviewPanel data={lessonData} onUpdate={handleDataUpdate} />
+        <PreviewPanel 
+          data={lessonData} 
+          onUpdate={handleDataUpdate} 
+          isLoading={isInitializing}
+        />
       </TabsContent>
     </Tabs>
   );
@@ -75,8 +93,9 @@ export function EditorPage() {
           <div className="flex gap-4">
             <button
               onClick={handleRefine}
+              disabled={isInitializing}
               aria-label="Automatically align lesson with standards"
-              className="px-4 py-2 border-2 border-brand-black font-bold hover:bg-brand-primary hover:text-white focus:ring-2 focus:ring-brand-primary transition-all flex items-center gap-2 uppercase text-[10px] tracking-widest"
+              className="px-4 py-2 border-2 border-brand-black font-bold hover:bg-brand-primary hover:text-white focus:ring-2 focus:ring-brand-primary transition-all flex items-center gap-2 uppercase text-[10px] tracking-widest disabled:opacity-50"
             >
               <Sparkles className="w-4 h-4" />
               Auto-Align
