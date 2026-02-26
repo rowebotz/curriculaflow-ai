@@ -8,7 +8,7 @@ export const mockLessons = [
     tags: ['NGSS', 'HS-LS2', 'Mastery'],
     blueprint: {
       title: 'The Nitrogen Cycle',
-      standardsGuideUrl: 'https://mheducation.com/standards/science/biology',
+      standardsGuideUrl: 'https://standards.curriculaflow.io/science/biology',
       pedagogicalLayers: {
         spacedRepetition: true,
         retrievalPractice: true,
@@ -49,7 +49,7 @@ export const mockLessons = [
     tags: ['Common Core', 'RL.11-12', 'Symbolism'],
     blueprint: {
       title: 'Gatsby: Symbolic Landscape',
-      standardsGuideUrl: 'https://mheducation.com/standards/ela/curriculum-guide',
+      standardsGuideUrl: 'https://standards.curriculaflow.io/ela/curriculum-guide',
       rigorLevel: 'Advanced',
       pedagogicalLayers: {
         spacedRepetition: false,

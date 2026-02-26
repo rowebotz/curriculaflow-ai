@@ -42,7 +42,7 @@ export class ChatAgent extends Agent<Env, ChatState> {
     1. Backward Design: Start with the assessment/standard.
     2. Rigor Levels: Adjust DOK (Depth of Knowledge) based on the teacher's selected level.
     3. Learning Science: Embed retrieval practice (quizzes, recall) and spaced reinforcement if requested.
-    4. Rationale: For every standard, explain WHY it's mapped to that specific module.`;
+    4. Rationale: For every standard, explain WHY it's mapped to that specific module using a universal pedagogical framework.`;
     this.chatHandler = new ChatHandler(
       this.env.CF_AI_BASE_URL,
       this.env.CF_AI_API_KEY,

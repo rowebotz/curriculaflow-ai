@@ -18,7 +18,7 @@ export function HomePage() {
               Sketchpad
             </h2>
             <p className="text-xl text-brand-gray font-medium max-w-lg">
-              Manage and deploy your AI-augmented lesson blueprints to McGraw Hill ecosystems.
+              Manage and deploy your AI-augmented lesson blueprints to standard LMS ecosystems.
             </p>
           </div>
           <button
@@ -41,7 +41,7 @@ export function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {mockLessons.map((lesson) => (
-              <div 
+              <div
                 key={lesson.id}
                 onClick={() => navigate(`/editor/${lesson.id}`)}
                 className="group cursor-pointer"
@@ -68,7 +68,7 @@ export function HomePage() {
                 </div>
               </div>
             ))}
-            <button 
+            <button
               onClick={() => navigate('/editor')}
               className="border-2 border-dashed border-brand-black/20 flex flex-col items-center justify-center p-12 hover:border-brand-primary hover:bg-brand-primary/5 transition-colors group"
             >

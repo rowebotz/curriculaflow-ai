@@ -90,7 +90,7 @@ export function PreviewPanel({ data, onUpdate }: PreviewProps) {
                               <ExternalLink className="w-3 h-3" />
                             </a>
                          </div>
-                         <p className="leading-relaxed text-brand-gray mb-3">{mod.rationale?.[s] || "Mapping verified via McGraw Hill standards engine."}</p>
+                         <p className="leading-relaxed text-brand-gray mb-3">{mod.rationale?.[s] || "Mapping verified via CurriculaFlow standards engine."}</p>
                          <button className="w-full py-2 bg-brand-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-primary/90">
                            View Mastery Guide
                          </button>
@@ -121,8 +121,8 @@ export function PreviewPanel({ data, onUpdate }: PreviewProps) {
                   </div>
                   <div className="space-y-3">
                     <div className="p-3 bg-muted text-[11px] font-bold border-l-4 border-brand-black">
-                      {data.rigorLevel === 'ELL' ? 'Simplified syntax and visual modeling enabled.' : 
-                       data.rigorLevel === 'Advanced' ? 'Inquiry depth increased with extension prompts.' : 
+                      {data.rigorLevel === 'ELL' ? 'Simplified syntax and visual modeling enabled.' :
+                       data.rigorLevel === 'Advanced' ? 'Inquiry depth increased with extension prompts.' :
                        'Grade-level appropriate cognitive load.'}
                     </div>
                     {data.pedagogicalLayers?.retrievalPractice && (

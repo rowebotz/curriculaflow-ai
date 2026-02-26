@@ -13,13 +13,13 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
   return (
     <TooltipProvider>
       <div className="flex h-screen w-full overflow-hidden bg-paper">
-        {/* Authoritative Sidebar */}
+        {/* Professional Neutral Sidebar */}
         <aside className="w-64 notebook-margin bg-white flex flex-col p-6 z-30">
           <div className="mb-12">
             <h1 className="font-display text-2xl font-black text-brand-black tracking-tighter">
               CURRICULA<span className="text-brand-primary">FLOW</span>
             </h1>
-            <p className="text-[10px] text-brand-gray uppercase font-bold tracking-[0.2em] mt-1">McGraw Hill Education</p>
+            <p className="text-[10px] text-brand-gray uppercase font-bold tracking-[0.2em] mt-1">Instructional Design Engine</p>
           </div>
           <nav className="flex-1 space-y-2">
             {navItems.map((item) => (
@@ -71,7 +71,7 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
               <span>Secure Professional Workspace</span>
             </div>
             <div className="pointer-events-auto cursor-pointer hover:text-brand-primary transition-colors">
-              © 2024 McGraw Hill Solutions
+              © 2024 CurriculaFlow Systems
             </div>
           </footer>
         </main>

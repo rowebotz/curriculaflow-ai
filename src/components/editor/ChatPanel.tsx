@@ -9,14 +9,13 @@ interface Message {
 }
 export function ChatPanel({ onBlueprintUpdate }: { onBlueprintUpdate: (data: any) => void }) {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: "Instructional Engine initialized. Provide your learning objectives or content snippets to generate a McGraw Hill-aligned lesson blueprint." }
+    { role: 'assistant', content: "Instructional Engine initialized. Provide your learning objectives or content snippets to generate a standards-aligned lesson blueprint." }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
-  // Robust scrolling to bottom
   const scrollToBottom = (instant = false) => {
-    scrollAnchorRef.current?.scrollIntoView({ 
+    scrollAnchorRef.current?.scrollIntoView({
       behavior: instant ? 'auto' : 'smooth',
       block: 'end'
     });
@@ -46,7 +45,6 @@ export function ChatPanel({ onBlueprintUpdate }: { onBlueprintUpdate: (data: any
           }
         });
       });
-      // After streaming finishes, check for JSON blocks
       const jsonMatch = fullAssistantContent.match(/```json\s*([\s\S]*?)\s*```/);
       if (jsonMatch && jsonMatch[1]) {
         try {
@@ -68,7 +66,7 @@ export function ChatPanel({ onBlueprintUpdate }: { onBlueprintUpdate: (data: any
       <div className="bg-brand-black text-white px-4 py-3 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em]">
         <div className="flex items-center gap-2">
           <Bot className="w-4 h-4 text-brand-primary" />
-          <span>CurriculaBot Engine</span>
+          <span>CurriculaFlow Engine</span>
         </div>
         <Sparkles className="w-4 h-4 text-brand-primary" />
       </div>
