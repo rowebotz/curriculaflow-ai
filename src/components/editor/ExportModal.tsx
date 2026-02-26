@@ -83,9 +83,12 @@ export function ExportModal({ isOpen, onClose, lessonTitle }: ExportModalProps) 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px] border-3 border-ink shadow-sketch-lg bg-paper max-h-[90vh] overflow-y-auto p-0 overflow-hidden" aria-labelledby="export-dialog-title">
+        <DialogTitle id="export-dialog-title" className="sr-only">
+          Export to Classroom
+        </DialogTitle>
         <div className="p-6 md:p-8">
           <DialogHeader className="mb-8">
-            <DialogTitle id="export-dialog-title" className="font-display text-4xl text-center uppercase tracking-tighter">Export to Classroom</DialogTitle>
+            <DialogTitle className="font-display text-4xl text-center uppercase tracking-tighter">Export to Classroom</DialogTitle>
             <DialogDescription className="text-center italic text-lg text-muted-foreground">
               Works with Google Classroom, Canvas, Blackboard, Schoology, and more.
             </DialogDescription>
