@@ -3,40 +3,39 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --background: 40 20% 98%;
-    --foreground: 0 0% 15%;
-    --primary: 0 0% 15%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --primary: 0 79% 50%;
     --primary-foreground: 0 0% 100%;
-    --muted: 40 10% 90%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
     --border: 0 0% 0%;
-    --input: 40 10% 95%;
+    --input: 0 0% 98%;
     --radius: 0px;
   }
   body {
-    @apply bg-paper text-ink font-body;
-    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-    background-size: 20px 20px;
+    @apply bg-paper text-brand-black font-body antialiased;
+    background-image: none;
   }
 }
 @layer components {
   .card-sketch {
-    @apply bg-white border-3 border-ink shadow-sketch transition-all duration-200;
+    @apply bg-white border-2 border-brand-black shadow-sketch transition-all duration-200;
   }
   .card-sketch:hover {
     @apply -translate-x-0.5 -translate-y-0.5 shadow-sketch-lg;
   }
   .btn-sketch {
-    @apply inline-flex items-center justify-center px-6 py-2 border-3 border-ink shadow-sketch bg-highlighter font-bold transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-sketch-hover;
+    @apply inline-flex items-center justify-center px-6 py-2 border-2 border-brand-black shadow-sketch bg-brand-primary text-white font-bold transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-sketch-hover uppercase tracking-wider text-xs;
   }
   .input-sketch {
-    @apply border-b-2 border-ink bg-transparent focus:outline-none focus:border-highlighter py-2 px-1 transition-colors font-body text-xl;
+    @apply border-b-2 border-brand-black bg-transparent focus:outline-none focus:border-brand-primary py-2 px-1 transition-colors font-body text-lg;
   }
   .notebook-margin {
-    @apply border-r-2 border-correction/30 relative;
+    @apply border-r-2 border-brand-black/5 relative;
   }
   .notebook-margin::before {
     content: '';
-    @apply absolute top-0 left-4 bottom-0 w-px bg-correction/30;
+    @apply absolute top-0 left-6 bottom-0 w-px bg-brand-primary/20;
   }
 }

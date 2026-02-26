@@ -5,33 +5,38 @@ export default {
   theme: {
   	extend: {
   		fontFamily: {
-  			display: ['"Fredericka the Great"', 'serif'],
-  			body: ['"Patrick Hand"', '"Comic Neue"', 'cursive'],
+  			display: ['Inter', 'sans-serif'],
+  			body: ['Inter', 'sans-serif'],
         sans: ['Inter', 'sans-serif'],
   		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
-        paper: '#fdfbf7',
-        highlighter: '#FFD23F',
-        correction: '#EE4266',
-        ink: '#3B3B3B',
+        paper: '#FAFAFA',
+        brand: {
+          primary: '#E21A23', // McGraw Hill Red
+          black: '#000000',
+          gray: '#71717A',
+        },
+        highlighter: '#E21A23', // Mapping old keys to new brand for compatibility
+        correction: '#E21A23',
+        ink: '#000000',
   			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
+  				DEFAULT: '#E21A23',
+  				foreground: '#FFFFFF'
   			},
-  			border: 'hsl(var(--border))',
+  			border: '#000000',
   			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
+  			ring: '#E21A23',
   			muted: {
   				DEFAULT: 'hsl(var(--muted))',
   				foreground: 'hsl(var(--muted-foreground))'
   			}
   		},
   		boxShadow: {
-  			sketch: '4px 4px 0px 0px rgba(0, 0, 0, 1)',
-        'sketch-hover': '2px 2px 0px 0px rgba(0, 0, 0, 1)',
-        'sketch-lg': '8px 8px 0px 0px rgba(0, 0, 0, 1)',
+  			sketch: '2px 2px 0px 0px rgba(0, 0, 0, 1)',
+        'sketch-hover': '1px 1px 0px 0px rgba(0, 0, 0, 1)',
+        'sketch-lg': '4px 4px 0px 0px rgba(0, 0, 0, 1)',
   		},
       borderWidth: {
         '3': '3px',

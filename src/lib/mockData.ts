@@ -3,11 +3,12 @@ export const mockLessons = [
     id: '1',
     title: 'The Nitrogen Cycle',
     subject: 'Biology',
-    description: 'An inquiry-based module exploring how nitrogen moves through aquatic ecosystems.',
+    description: 'A comprehensive investigation into the biogeochemical cycling of nitrogen within aquatic systems.',
     date: '2 hours ago',
-    tags: ['NGSS', 'HS-LS2', 'Inquiry'],
+    tags: ['NGSS', 'HS-LS2', 'Mastery'],
     blueprint: {
       title: 'The Nitrogen Cycle',
+      standardsGuideUrl: 'https://mheducation.com/standards/science/biology',
       pedagogicalLayers: {
         spacedRepetition: true,
         retrievalPractice: true,
@@ -17,35 +18,38 @@ export const mockLessons = [
       modules: [
         {
           id: 'm1',
-          title: 'Initial Equilibrium',
-          objectives: ['Identify key chemical forms of nitrogen', 'Describe bacterial roles'],
+          title: 'Biotic Nitrogen Conversion',
+          objectives: ['Analyze chemical transformations of nitrogen', 'Evaluate microbial catalytic roles'],
           standards: ['HS-LS2-4', 'HS-LS2-5'],
           rationale: {
-            'HS-LS2-4': 'Connects chemical cycles to biological energy transfer.',
-            'HS-LS2-5': 'Models carbon/nitrogen flows as interlocking systems.'
-          }
+            'HS-LS2-4': 'Requires students to model how energy flows through cycles to sustain biological systems.',
+            'HS-LS2-5': 'Direct alignment with systems modeling of matter conservation in closed ecosystems.'
+          },
+          mode: 'Direct Instruction'
         },
         {
           id: 'm2',
-          title: 'Human Impact Simulation',
-          objectives: ['Analyze effects of fertilizer runoff', 'Predict population changes'],
+          title: 'Anthropogenic Influence',
+          objectives: ['Model fertilizer runoff perturbations', 'Assess ecosystem stability thresholds'],
           standards: ['HS-LS2-7'],
           rationale: {
-            'HS-LS2-7': 'Evaluates human-caused changes on ecosystem stability.'
-          }
+            'HS-LS2-7': 'Targets higher-order evaluation of human intervention on biodiversity and stability.'
+          },
+          mode: 'Inquiry-Based Discovery'
         }
       ]
     }
   },
   {
     id: '2',
-    title: 'The Great Gatsby: Symbolism',
+    title: 'Gatsby: The Symbolic Landscape',
     subject: 'ELA',
-    description: 'Deconstructing the Green Light through close reading and color theory.',
+    description: 'Structuralist analysis of setting and color as thematic drivers in 20th-century literature.',
     date: 'Yesterday',
-    tags: ['Common Core', '9-10.RL', 'Symbolism'],
+    tags: ['Common Core', 'RL.11-12', 'Symbolism'],
     blueprint: {
-      title: 'The Great Gatsby: Symbolism',
+      title: 'Gatsby: Symbolic Landscape',
+      standardsGuideUrl: 'https://mheducation.com/standards/ela/curriculum-guide',
       rigorLevel: 'Advanced',
       pedagogicalLayers: {
         spacedRepetition: false,
@@ -55,12 +59,13 @@ export const mockLessons = [
       modules: [
         {
           id: 'm1',
-          title: 'Contextualizing West Egg',
-          objectives: ['Map character locations to themes', 'Define historical opulence'],
+          title: 'Setting as Antagonist',
+          objectives: ['Correlate physical setting to character degradation', 'Synthesize historical luxury motifs'],
           standards: ['CCSS.ELA-LITERACY.RL.11-12.3'],
           rationale: {
-            'CCSS.ELA-LITERACY.RL.11-12.3': 'Deep dive into complex character motivation vs setting.'
-          }
+            'CCSS.ELA-LITERACY.RL.11-12.3': 'Deep analysis of the interaction between plot trajectory and setting constraints.'
+          },
+          mode: 'Collaborative Seminar'
         }
       ]
     }
@@ -81,9 +86,9 @@ export const mockAnalyticsData = {
     { name: 'NGSS.PS.2', value: 77 },
   ],
   studentGroups: {
-    readyForExtension: ['Alice W.', 'David L.', 'Elena R.'],
-    interventionNeeded: ['Mark S.', 'Chloe B.'],
-    ellSupport: ['Juan P.', 'Yuki T.']
+    readyForExtension: ['Advanced Tier: 12 Students', 'Elite Mastery: 4 Students'],
+    interventionNeeded: ['Remedial Track: 3 Students', 'ELL Support: 5 Students'],
+    ellSupport: ['Tier 3 Vocabulary Focus: 8 Students']
   },
   predictiveOutlook: [
     { name: 'Unit 1', score: 85 },
@@ -92,17 +97,8 @@ export const mockAnalyticsData = {
     { name: 'Unit 4', score: 84 },
   ],
   suggestions: [
-    "Increase scaffolding for HS-LS2-7 standard.",
-    "Introduce more visual modeling for the Nitrogen cycle.",
-    "Differentiate Module 2 for Group C learners."
+    "Increase scaffolding for HS-LS2-7 standard in Tier 2 groups.",
+    "Prioritize visual modeling for non-standard ELA tracks.",
+    "Deploy adaptive retrieval blocks for Unit 3 preview."
   ]
 };
-export const pedagogicalFrameworks = [
-  { id: 'retrieval', name: 'Retrieval Practice', description: 'Actively recalling information strengthens long-term memory.' },
-  { id: 'spaced', name: 'Spaced Reinforcement', description: 'Reviewing content at increasing intervals to combat the forgetting curve.' },
-  { id: 'formative', name: 'Formative Checkpoints', description: 'Low-stakes assessments to gauge understanding mid-lesson.' }
-];
-export const educationalStandards = [
-  { id: 'HS-LS2-4', description: 'Use mathematical representations to support claims for the cycling of matter.' },
-  { id: 'CCSS.ELA-LITERACY.RL.11-12.3', description: 'Analyze the impact of the author’s choices regarding how to develop and relate elements of a story.' }
-];
