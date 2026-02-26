@@ -105,9 +105,14 @@ export function WhyHirePage() {
                   <p className="text-xs italic text-brand-gray leading-relaxed">
                     "Stephen doesn't just deploy technology; he integrates pedagogy into the architectural layer of every platform he builds."
                   </p>
-                  <button className="w-full btn-sketch bg-white text-brand-black hover:bg-brand-primary hover:text-white transition-colors">
-                    Request Portfolio
-                  </button>
+                  <a 
+                    href="https://www.digitalrowe.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="w-full btn-sketch bg-white text-brand-black hover:bg-brand-primary hover:text-white transition-colors"
+                  >
+                    See more
+                  </a>
                 </div>
               </div>
               <div className="border-3 border-brand-black p-6 bg-highlighter/10 rotate-1">

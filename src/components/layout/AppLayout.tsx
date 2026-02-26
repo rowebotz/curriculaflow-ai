@@ -12,7 +12,7 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
     { name: "Sketchpad", path: "/", icon: Home },
     { name: "The Weaver", path: "/editor", icon: PenTool },
     { name: "Insight Lens", path: "/analytics", icon: BarChart3 },
-    { name: "Why Hire?", path: "/why-hire", icon: Briefcase },
+    { name: "Hire Stephen?", path: "/why-hire", icon: Briefcase },
   ];
   const NavContent = () => (
     <div className="flex flex-col h-full font-sans">
