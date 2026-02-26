@@ -105,7 +105,7 @@ function reloadTriggerPlugin() {
 export default ({ mode }: { mode: string }) => {
   const env = loadEnv(mode, process.cwd());
   return defineConfig({
-    base: "/curriculaflow-ai/",
+    base: "/curriculaflow-ai",
     plugins: [react(), cloudflare(), watchDependenciesPlugin(), reloadTriggerPlugin()],
     build: {
       minify: true,
