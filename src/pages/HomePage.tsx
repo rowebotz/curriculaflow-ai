@@ -52,7 +52,7 @@ export function HomePage() {
         <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b-2 border-brand-black pb-10">
           <div className="relative">
             <div className="inline-block px-3 py-1 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.3em] mb-4 border-2 border-brand-black shadow-sketch-hover">
-              Authorized Teacher Workspace
+              Teacher Workspace
             </div>
             <h2 className="font-display text-7xl font-black text-brand-black tracking-tighter leading-[0.8] mb-4 uppercase">
               Sketchpad
