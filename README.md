@@ -78,3 +78,7 @@ Clone the repository:
 ```bash
 git clone <your-repo-url>
 cd curriculaflow
+
+
+Built by Stephen Rowe
+Instructional systems + AI-powered curriculum engineering
