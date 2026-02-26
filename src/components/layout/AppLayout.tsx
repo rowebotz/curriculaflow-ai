@@ -66,7 +66,7 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
         )}
         <div className="flex-1 relative overflow-y-auto flex flex-col">
           {isMobile && (
-            <header className="h-16 border-b-2 border-brand-black bg-white flex items-center justify-between px-4 z-40 shrink-0">
+            <header className="h-20 border-b-2 border-brand-black bg-white flex items-center justify-between px-4 z-40 shrink-0">
               <h1 className="font-display text-xl font-black text-brand-black">
                 CURRICULA<span className="text-brand-primary">FLOW</span>
               </h1>
@@ -77,7 +77,9 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
                   </button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-72 p-6 bg-white border-r-3 border-brand-black">
-                  <NavContent />
+                  <TooltipProvider>
+                    <NavContent />
+                  </TooltipProvider>
                 </SheetContent>
               </Sheet>
             </header>
@@ -85,11 +87,16 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
           <main className={cn("flex-1 relative", isMobile ? "p-4" : "p-10 pb-24")}>
             {children}
             <footer className="mt-20 flex justify-between items-center text-[10px] text-brand-gray font-bold uppercase tracking-widest border-t border-brand-black/5 pt-4">
-              <div className="flex items-center gap-1">
-                <Lock className="w-3 h-3" />
-                <span>Secure Professional Workspace</span>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
+                  <Lock className="w-3 h-3" />
+                  <span>Secure Workspace</span>
+                </div>
+                <div className="px-1.5 py-0.5 border border-brand-black/10 bg-muted/30 text-[8px] font-black">
+                  v1.0.4-PRO
+                </div>
               </div>
-              <Link to="/why-hire" className="hover:text-brand-primary transition-colors cursor-pointer">
+              <Link to="/why-hire" className="hover:text-brand-primary hover:underline transition-all cursor-pointer">
                 Stephen Rowe's Job Application Tool
               </Link>
             </footer>

@@ -46,7 +46,6 @@ export function HomePage() {
       setIsCreating(false);
     }
   };
-  // The very first session in the list (most recently active) gets the special badge
   const mostRecentSessionId = sessions.length > 0 ? sessions[0].id : null;
   return (
     <AppLayout>
@@ -105,12 +104,12 @@ export function HomePage() {
                     <div className="absolute top-0 right-0 w-12 h-12 bg-brand-primary/5 -rotate-45 translate-x-6 -translate-y-6" />
                     <div className="flex justify-between items-start mb-6">
                       {session.id === mostRecentSessionId ? (
-                        <span className="text-[10px] font-black uppercase px-2 py-1 bg-brand-black text-white flex items-center gap-1">
+                        <span className="text-[10px] font-black uppercase px-2 py-1 bg-brand-black text-white flex items-center gap-1 border border-brand-black">
                           <Sparkles className="w-3 h-3 text-brand-primary" />
                           Recently Viewed
                         </span>
                       ) : (
-                        <span className="text-[10px] font-black uppercase px-2 py-1 bg-muted text-brand-black border border-brand-black/10">
+                        <span className="text-[10px] font-black uppercase px-2 py-1 bg-muted text-brand-black border-2 border-brand-black">
                           Draft
                         </span>
                       )}
@@ -129,28 +128,27 @@ export function HomePage() {
                 </div>
               ))
             )}
-            {/* Mock Examples - Visual weight reduced if real sessions exist */}
             {mockLessons.map((lesson) => (
               <div
                 key={lesson.id}
                 onClick={() => navigate(`/editor/${lesson.id}`)}
                 className={cn(
                   "group cursor-pointer transition-all duration-300",
-                  sessions.length > 0 && lesson.id.length < 5 ? "opacity-40 hover:opacity-100" : "opacity-80 hover:opacity-100"
+                  sessions.length > 0 ? "opacity-60 hover:opacity-100" : "opacity-80 hover:opacity-100"
                 )}
               >
                 <div className={cn(
                   "border-2 p-8 shadow-none group-hover:shadow-sketch group-hover:border-solid group-hover:border-brand-black group-hover:-translate-y-1 transition-all h-full flex flex-col grayscale hover:grayscale-0",
-                  lesson.id.startsWith('stem') || lesson.id.startsWith('math') 
-                    ? "border-brand-black/40 bg-white" 
+                  lesson.id.startsWith('stem') || lesson.id.startsWith('math')
+                    ? "border-brand-black/40 bg-white"
                     : "border-dashed border-brand-black/30 bg-white/50"
                 )}>
                   <div className="flex justify-between items-start mb-6">
                     <span className={cn(
-                      "text-[10px] font-black uppercase px-2 py-1 border",
-                      lesson.subject === 'STEM' ? "bg-blue-50 text-blue-700 border-blue-200" :
-                      lesson.subject === 'Math' ? "bg-green-50 text-green-700 border-green-200" :
-                      "bg-brand-primary/20 text-brand-primary border-brand-primary/30"
+                      "text-[10px] font-black uppercase px-2 py-1 border-2 border-brand-black",
+                      lesson.subject === 'STEM' ? "bg-blue-50 text-blue-700" :
+                      lesson.subject === 'Math' ? "bg-green-50 text-green-700" :
+                      "bg-brand-primary/20 text-brand-primary"
                     )}>
                       {lesson.subject}
                     </span>
@@ -161,7 +159,7 @@ export function HomePage() {
                   <div className="mt-auto flex items-center justify-between border-t border-brand-black/10 pt-6">
                     <div className="flex gap-1">
                       {lesson.tags.slice(0, 2).map(tag => (
-                        <span key={tag} className="text-[9px] font-black uppercase text-brand-black/40 group-hover:text-brand-black border border-brand-black/20 group-hover:border-brand-black px-1.5 py-0.5">
+                        <span key={tag} className="text-[9px] font-black uppercase text-brand-black/40 group-hover:text-brand-black border-2 border-brand-black/20 group-hover:border-brand-black px-1.5 py-0.5">
                           {tag}
                         </span>
                       ))}
@@ -185,8 +183,8 @@ export function HomePage() {
             )}
           </div>
         </section>
-        <footer className="pt-16 text-center border-t border-brand-black/5">
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-gray opacity-50">
+        <footer className="pt-16 text-center border-t border-brand-black/5 pb-12">
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-gray opacity-50 font-sans">
             Professional Grade Instructional Deployment Engine
           </p>
         </footer>

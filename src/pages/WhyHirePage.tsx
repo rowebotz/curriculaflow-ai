@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { SketchCard } from '@/components/ui/sketch-card';
-import { Award, Globe, Zap, Cpu, GraduationCap, Target, ShieldCheck } from 'lucide-react';
+import { Award, Globe, Zap, Cpu, GraduationCap, Target, BookOpen } from 'lucide-react';
 export function WhyHirePage() {
   return (
     <AppLayout>
@@ -27,18 +27,19 @@ export function WhyHirePage() {
                 </div>
                 <div className="space-y-6 text-lg leading-relaxed text-brand-black font-medium">
                   <p>
-                    Stephen Rowe builds learning systems that actually get used. As Program Director of
+                    Stephen Rowe builds learning systems that actually get used. As <span className="font-bold text-brand-primary">Program Director</span> of 
                     <a 
                       href="https://www.cato.courses" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-brand-primary font-bold hover:underline underline-offset-4 transition-all"
-                    > Cato Courses</a>, he led the creation and launch
+                      aria-label="Visit Cato Courses (opens in a new tab)"
+                      className="text-brand-primary font-bold hover:underline underline-offset-4 transition-all ml-1"
+                    >Cato Courses</a>, he led the creation and launch
                     of a custom LMS platform in under a year, working alongside scholars, designers, and executives
                     to bring rigorous academic content into a modern, digital-first experience.
                   </p>
                   <p>
-                    He implemented <span className="underline decoration-brand-primary decoration-2 underline-offset-4">AI chatbots modeled on historical thinkers</span>,
+                    He implemented <span className="underline decoration-brand-primary decoration-2 underline-offset-4">AI chatbots modeled on historical thinkers</span>, 
                     interactive learning tools, analytics dashboards, and secure authentication systems, ensuring
                     the platform was not only innovative but scalable and measurable in its impact.
                   </p>
@@ -56,8 +57,8 @@ export function WhyHirePage() {
                     and built an online training platform that enrolled over 17,000 learners in four years.
                   </p>
                   <p>
-                    He delivered hundreds of hours of live instruction and taught practical AI integration long
-                    before it became a trend. Throughout his career, he has focused on reducing friction for
+                    He delivered hundreds of hours of live instruction and taught practical AI integration long 
+                    before it became a trend. Throughout his career, he has focused on reducing friction for 
                     educators, improving learner engagement, and using data to strengthen outcomes.
                   </p>
                 </div>
@@ -71,8 +72,9 @@ export function WhyHirePage() {
                   <p>
                     <span className="font-black text-brand-primary uppercase tracking-tighter">CurriculaFlow</span> reflects
                     that same approach. It is not a theoretical concept but a working example of how AI can support
-                    standards alignment, learning science, interoperability, and responsible data governance in a
-                    real classroom environment.
+                    <span className="font-bold underline decoration-brand-primary decoration-2">interoperability</span>, 
+                    <span className="font-bold underline decoration-brand-primary decoration-2 ml-1">standards-alignment</span>, 
+                    and responsible data governance in a real classroom environment.
                   </p>
                   <p>
                     Stephen approaches AI as <span className="font-bold underline decoration-brand-black">infrastructure, not novelty</span>.
@@ -96,6 +98,10 @@ export function WhyHirePage() {
                       <span>LTI 1.3 Advantage Integration</span>
                     </li>
                     <li className="flex items-start gap-2">
+                      <BookOpen className="w-4 h-4 shrink-0 mt-0.5 text-brand-primary" />
+                      <span>Instructional Design Mastery</span>
+                    </li>
+                    <li className="flex items-start gap-2">
                       <Award className="w-4 h-4 shrink-0 mt-0.5 text-brand-primary" />
                       <span>Global Program Management</span>
                     </li>
@@ -110,10 +116,11 @@ export function WhyHirePage() {
                   <p className="text-xs italic text-brand-gray leading-relaxed">
                     "Stephen doesn't just deploy technology; he integrates pedagogy into the architectural layer of every platform he builds."
                   </p>
-                  <a
-                    href="https://www.digitalrowe.com"
-                    target="_blank"
+                  <a 
+                    href="https://www.digitalrowe.com" 
+                    target="_blank" 
                     rel="noopener noreferrer"
+                    aria-label="View Stephen's professional portfolio (opens in a new tab)"
                     className="w-full btn-sketch bg-white text-brand-black hover:bg-brand-primary hover:text-white transition-colors"
                   >
                     See more

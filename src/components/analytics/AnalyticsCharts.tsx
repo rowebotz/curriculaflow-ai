@@ -55,25 +55,34 @@ export const EngagementTrends = ({ data }: { data: any[] }) => {
 };
 const CustomMasteryLabel = (props: any) => {
   const { x, y, width, height, value } = props;
-  const iconX = x + width + 10;
-  const iconY = y + height / 2 - 8;
+  // Precise vertical centering for status icons next to bars
+  const iconX = x + width + 12;
+  const iconY = y + (height / 2) - 8;
+  // Safety checks for foreignObject dimensions
+  const size = 16;
   if (value > 85) {
     return (
-      <foreignObject x={iconX} y={iconY} width="16" height="16">
-        <Star className="w-4 h-4 text-brand-primary" aria-label="Mastery Achieved" />
+      <foreignObject x={iconX} y={iconY} width={size} height={size}>
+        <div className="flex items-center justify-center w-full h-full">
+          <Star className="w-4 h-4 text-brand-primary" aria-label="Mastery Achieved" />
+        </div>
       </foreignObject>
     );
   }
   if (value > 70) {
     return (
-      <foreignObject x={iconX} y={iconY} width="16" height="16">
-        <CheckCircle2 className="w-4 h-4 text-brand-black" aria-label="On Track" />
+      <foreignObject x={iconX} y={iconY} width={size} height={size}>
+        <div className="flex items-center justify-center w-full h-full">
+          <CheckCircle2 className="w-4 h-4 text-brand-black" aria-label="On Track" />
+        </div>
       </foreignObject>
     );
   }
   return (
-    <foreignObject x={iconX} y={iconY} width="16" height="16">
-      <AlertTriangle className="w-4 h-4 text-brand-gray" aria-label="Intervention Suggested" />
+    <foreignObject x={iconX} y={iconY} width={size} height={size}>
+      <div className="flex items-center justify-center w-full h-full">
+        <AlertTriangle className="w-4 h-4 text-brand-gray" aria-label="Intervention Suggested" />
+      </div>
     </foreignObject>
   );
 };
@@ -95,14 +104,14 @@ export const MasteryHeatmap = ({ data }: { data: any[] }) => {
           data={data}
           layout="vertical"
           barSize={32}
-          margin={{ left: 20, right: 40 }}
+          margin={{ left: 20, right: 60 }}
         >
           <defs>
             <pattern id={stripeId} patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
-              <line x1="0" y1="0" x2="0" y2="8" stroke="#71717A" strokeWidth="2" />
+              <line x1="0" y1="0" x2="0" y2="8" stroke="#71717A" strokeWidth="2" strokeOpacity="0.7" />
             </pattern>
             <pattern id={dotId} patternUnits="userSpaceOnUse" width="10" height="10">
-              <circle cx="2" cy="2" r="1.5" fill="#000000" />
+              <circle cx="2" cy="2" r="1.5" fill="#000000" fillOpacity="0.6" />
             </pattern>
           </defs>
           <CartesianGrid strokeDasharray="0" horizontal={false} stroke="#00000010" />
@@ -127,6 +136,7 @@ export const MasteryHeatmap = ({ data }: { data: any[] }) => {
                 fill={entry.value > 85 ? '#E21A23' : getPattern(entry.value)}
                 stroke="#000000"
                 strokeWidth={1.5}
+                className="transition-all duration-300"
                 aria-label={`${entry.name}: ${entry.value}% mastery`}
               />
             ))}

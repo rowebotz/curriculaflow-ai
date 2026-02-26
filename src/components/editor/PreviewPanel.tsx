@@ -53,7 +53,7 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
       });
     }
   };
-  const rigorLevel = data.rigorLevel || 'Standard';
+  const rigorLevel = data.rigorLevel ?? (data ? 'Evaluating...' : 'Standard');
   const pedagogicalLayers = data.pedagogicalLayers || {
     spacedRepetition: false,
     retrievalPractice: false,
@@ -122,29 +122,27 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
             const headingId = `heading-${modId}`;
             const titleLower = (mod.title || '').toLowerCase();
             const modeLower = (mod.mode || '').toLowerCase();
-            
             const isStage = titleLower.includes('warmup') || 
                            titleLower.includes('reflection') || 
                            titleLower.includes('checkpoint') ||
                            modeLower.includes('warmup') ||
                            modeLower.includes('checkpoint');
-
             return (
-              <article
-                key={modId}
+              <article 
+                key={modId} 
                 className="relative pl-10 border-l-2 border-brand-black/10"
                 role="listitem"
                 aria-labelledby={headingId}
               >
                 <div className={cn(
-                  "absolute -left-[13px] top-0 w-6 h-6 flex items-center justify-center text-[10px] font-black z-10",
+                  "absolute -left-[13px] top-0 w-6 h-6 flex items-center justify-center text-[10px] font-black z-10 transition-colors",
                   isStage ? "bg-brand-primary text-white" : "bg-brand-black text-white"
                 )} aria-hidden="true">
                   {String(idx + 1).padStart(2, '0')}
                 </div>
                 <div className={cn(
                   "border-2 border-brand-black p-6 hover:shadow-sketch-lg transition-all duration-300",
-                  isStage ? "bg-brand-primary/5 border-l-4" : "bg-white"
+                  isStage ? "bg-brand-primary/5 border-l-[6px] border-l-brand-primary" : "bg-white"
                 )}>
                   <div className="flex justify-between items-start mb-6 gap-4">
                     <div className="flex items-center gap-2">
@@ -175,13 +173,16 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
                              </button>
                            </PopoverTrigger>
                            <PopoverContent className="bg-brand-black text-white border-none shadow-none text-xs p-4 w-72 rounded-none z-50 font-sans">
-                             <div className="flex items-center justify-between mb-2 border-b border-white/20 pb-2">
-                                <span className="font-black uppercase tracking-widest text-brand-primary">Alignment Rationale</span>
+                             <div className="flex items-center justify-between mb-3 border-b border-white/20 pb-2">
+                                <span className="font-black uppercase tracking-[0.15em] text-brand-primary text-[10px]">Alignment Rationale</span>
                                 <span className="text-[8px] bg-green-500/20 text-green-400 border border-green-500/40 px-1 py-0.5 rounded-sm">
                                   98% AI CONFIDENCE
                                 </span>
                              </div>
-                             <p className="leading-relaxed text-brand-gray mb-3 italic">
+                             <p 
+                               className="leading-relaxed text-brand-gray mb-3 italic text-[11px]"
+                               title={`Instructional rationale for ${s}`}
+                             >
                                {mod.rationale?.[s] || "Mapping verified via CurriculaFlow RAG standards engine. Strategies target specific standard competencies."}
                              </p>
                              <button className="w-full py-2 bg-brand-primary text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-primary/90 transition-colors focus:ring-2 focus:ring-offset-1">
