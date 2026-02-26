@@ -71,6 +71,11 @@ The system is designed for extensibility, allowing new instructional tools, anal
 - Modern browser  
 - Environment variables configured for AI provider access  
 
+---
+
+Built by Stephen Rowe
+Instructional systems + AI-powered curriculum engineering
+
 ### Installation
 
 Clone the repository:
@@ -80,5 +85,4 @@ git clone <your-repo-url>
 cd curriculaflow
 
 
-Built by Stephen Rowe
-Instructional systems + AI-powered curriculum engineering
+
