@@ -101,10 +101,10 @@ export function EditorPage() {
             </button>
             <button
               onClick={() => setIsExportOpen(true)}
-              aria-label="Export lesson to Learning Management System"
+              aria-label="Export lesson to Classroom"
               className="btn-sketch focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
             >
-              Export to LMS
+              Export to Classroom
             </button>
           </div>
         </header>

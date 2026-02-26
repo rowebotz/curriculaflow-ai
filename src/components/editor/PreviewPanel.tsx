@@ -75,7 +75,7 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="flex items-center gap-1 text-[9px] font-bold text-brand-gray hover:text-brand-primary focus:ring-2 focus:ring-brand-primary transition-colors border border-brand-black/10 px-1.5 bg-muted/50">
+                    <button className="flex items-center gap-1 text-[9px] font-bold text-brand-gray hover:text-brand-primary focus:ring-2 focus:ring-brand-primary transition-colors border-b border-brand-black/20 px-1">
                       <ShieldAlert className="w-3 h-3" />
                       Transparency Mode
                     </button>
@@ -90,9 +90,6 @@ export function PreviewPanel({ data, onUpdate, isLoading }: PreviewProps) {
             </div>
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
-            <div className="bg-brand-black text-white px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
-              LTI Advantage v1.3
-            </div>
             <button
               onClick={handleCopyJson}
               aria-label="Copy blueprint JSON to clipboard"
