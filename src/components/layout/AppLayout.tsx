@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, PenTool, BarChart3, Coffee, ShieldCheck, Lock, Menu } from "lucide-react";
+import { Home, PenTool, BarChart3, Coffee, ShieldCheck, Lock, Menu, Briefcase } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +12,7 @@ export function AppLayout({ children }: { children: React.ReactNode }): JSX.Elem
     { name: "Sketchpad", path: "/", icon: Home },
     { name: "The Weaver", path: "/editor", icon: PenTool },
     { name: "Insight Lens", path: "/analytics", icon: BarChart3 },
+    { name: "Why Hire?", path: "/why-hire", icon: Briefcase },
   ];
   const NavContent = () => (
     <div className="flex flex-col h-full font-sans">

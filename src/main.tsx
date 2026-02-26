@@ -14,6 +14,7 @@ import '@/index.css'
 import { HomePage } from '@/pages/HomePage'
 import { EditorPage } from '@/pages/EditorPage'
 import { AnalyticsPage } from '@/pages/AnalyticsPage'
+import { WhyHirePage } from '@/pages/WhyHirePage'
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
@@ -34,6 +35,11 @@ const router = createBrowserRouter([
   {
     path: "/analytics",
     element: <AnalyticsPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/why-hire",
+    element: <WhyHirePage />,
     errorElement: <RouteErrorBoundary />,
   }
 ]);
